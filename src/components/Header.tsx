@@ -23,9 +23,9 @@ export default function Header({ onScrollToSection, phone = "0302-7000073" }: He
   }, []);
 
   const navLinks = [
-    { name: 'Custom Studio 🎨', id: 'studio' },
-    { name: 'DTC Catalog', id: 'catalog' },
-    { name: 'Cost Estimator 📊', id: 'estimator' },
+    { name: 'Branding Studio', id: 'studio' },
+    { name: 'Digital Catalog', id: 'catalog' },
+    { name: 'Cost Estimator', id: 'estimator' },
     { name: 'Why Print Vision', id: 'why' },
     { name: 'Get a Quote', id: 'contact' }
   ];
@@ -64,14 +64,6 @@ export default function Header({ onScrollToSection, phone = "0302-7000073" }: He
 
           {/* Call-to-action actions */}
           <div className="hidden sm:flex items-center gap-3">
-            <button
-              onClick={() => setShowWordPressModal(true)}
-              className="flex items-center gap-1.5 font-sans font-bold text-xs text-[#171B54] bg-[#F5F6FB]/80 hover:bg-[#E7E8F2] border border-[#171B54]/15 hover:border-[#171B54]/40 rounded-full px-4 py-2 transition-all cursor-pointer"
-              title="Configure WordPress connection details"
-            >
-              <Globe size={13.5} className="text-[#F5A623] animate-pulse" />
-              <span>WP Sync</span>
-            </button>
             <a 
               href={`tel:${phone.replace(/[^0-9+]/g, '')}`} 
               className="hidden xl:flex items-center gap-2 font-mono text-xs font-semibold text-[#171B54] bg-[#F5F6FB] hover:bg-[#E7E8F2] border border-[#E7E8F2] rounded-full px-4 py-2 transition-all cursor-pointer"
@@ -89,13 +81,6 @@ export default function Header({ onScrollToSection, phone = "0302-7000073" }: He
 
           {/* Mobile hamburger menu */}
           <div className="lg:hidden flex items-center gap-2">
-            <button
-              onClick={() => setShowWordPressModal(true)}
-              className="p-2 text-gray-700 hover:text-[#171B54] transition-colors focus:outline-none cursor-pointer"
-              title="Configure WordPress connection details"
-            >
-              <Globe size={18} className="text-[#F5A623]" />
-            </button>
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="p-2 text-gray-700 hover:text-[#171B54] transition-colors focus:outline-none cursor-pointer"
@@ -128,16 +113,6 @@ export default function Header({ onScrollToSection, phone = "0302-7000073" }: He
                 </button>
               ))}
               <div className="pt-4 flex flex-col gap-3">
-                <button
-                  onClick={() => {
-                    setIsOpen(false);
-                    setShowWordPressModal(true);
-                  }}
-                  className="flex items-center justify-center gap-2 font-sans font-bold text-sm bg-gray-50 border border-gray-200 text-[#171B54] rounded-full py-3 cursor-pointer"
-                >
-                  <Globe size={16} className="text-[#F5A623]" />
-                  Configure WordPress Link
-                </button>
                 <a 
                   href="tel:03027000073" 
                   className="flex items-center justify-center gap-2 font-mono text-sm font-semibold text-[#171B54] bg-[#F5F6FB] border border-[#E7E8F2] rounded-full py-3"
