@@ -96,13 +96,13 @@ export default function ContactForm({ prefilledEstimate, prefilledDesign }: Cont
                 <Mail size={18} />
               </div>
               <div className="flex flex-col text-left">
-                <span className="font-sans font-bold text-sm text-[#171B54]">Procurement Desk Email</span>
+                <span className="font-sans font-bold text-sm text-[#171B54]">Email Address</span>
                 <span className="font-mono text-sm text-gray-600 mt-1">
                   <a href="mailto:info@printvisionpk.com" className="hover:text-[#171B54] transition-colors">
                     info@printvisionpk.com
                   </a>
                 </span>
-                <span className="font-sans text-[10px] text-gray-400 mt-1">For CAD files, vector PDFs, or bulk contract sheets</span>
+                <span className="font-sans text-[10px] text-gray-400 mt-1">Send your design layout or PDF specifications</span>
               </div>
             </div>
 
@@ -111,11 +111,11 @@ export default function ContactForm({ prefilledEstimate, prefilledDesign }: Cont
                 <MapPin size={18} />
               </div>
               <div className="flex flex-col text-left">
-                <span className="font-sans font-bold text-sm text-[#171B54]">Weaving Looms &amp; Offset Plant</span>
+                <span className="font-sans font-bold text-sm text-[#171B54]">Factory Address</span>
                 <span className="font-sans text-sm text-gray-600 mt-1">
                   Eid Gah Road, Faisalabad, Pakistan
                 </span>
-                <span className="font-sans text-[10px] text-gray-400 mt-1">Visits available by appointment only</span>
+                <span className="font-sans text-[10px] text-gray-400 mt-1">Our commercial printing press plant facility</span>
               </div>
             </div>
           </div>
@@ -135,7 +135,7 @@ export default function ContactForm({ prefilledEstimate, prefilledDesign }: Cont
                 >
                   <div className="border-b border-white/10 pb-4">
                     <h3 className="font-display font-bold text-xl">Submit Digital Invoice Specs</h3>
-                    <p className="font-sans text-xs text-gray-300 mt-1">We will review your dimensions against our automated looms.</p>
+                    <p className="font-sans text-xs text-gray-300 mt-1">We will review your specifications and get in touch with you shortly.</p>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

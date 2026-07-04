@@ -28,7 +28,7 @@ export default function Estimator({ onEstimateSelect }: EstimatorProps) {
     { value: 'hang-tags', label: 'Apparel Hang Tags', minQty: 1000 },
     { value: 'barcode-stickers', label: 'Barcode POS Stickers', minQty: 2000 },
     { value: 'packaging-boxes', label: 'Rigid Cardboard Boxes', minQty: 500 },
-    { value: 'insert-cards', label: 'In-Box Insert Cards', minQty: 1000 },
+    { value: 'satin-labels', label: 'Premium Satin Labels', minQty: 1000 },
     { value: 'printed-bags', label: 'Laminated Paper Bags', minQty: 1000 }
   ];
 
@@ -237,7 +237,7 @@ export default function Estimator({ onEstimateSelect }: EstimatorProps) {
                   <div className="flex justify-between">
                     <span className="text-gray-300 flex items-center gap-1">
                       Plates &amp; Mold Setup Fee:
-                      <span className="text-[9px] text-gray-400" title="One-off fee for custom steel loom plate casts">ⓘ</span>
+                      <span className="text-[9px] text-gray-400" title="One-off fee for custom printing plates & machinery setup">ⓘ</span>
                     </span>
                     <span className="font-mono">Rs. {estimate.setupFee.toLocaleString()}</span>
                   </div>

@@ -25,8 +25,7 @@ export default function Header({ onScrollToSection, phone = "0302-7000073" }: He
     { name: 'Digital Catalog', id: 'catalog' },
     { name: 'Cost Estimator', id: 'estimator' },
     { name: 'Why Print Vision', id: 'why' },
-    { name: 'Get a Quote', id: 'contact' },
-    { name: 'Admin Portal 🔒', id: 'admin' }
+    { name: 'Get a Quote', id: 'contact' }
   ];
 
   const handleLinkClick = (id: string) => {

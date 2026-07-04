@@ -5,6 +5,7 @@ export type ProductType =
   | 'barcode-stickers'
   | 'packaging-boxes'
   | 'insert-cards'
+  | 'satin-labels'
   | 'offset-printing'
   | 'custom-branding'
   | 'flyers'

@@ -121,13 +121,22 @@ export default function Footer({ onScrollToSection, contact }: FooterProps) {
 
         {/* Bottom row copyrights and barcode accent decoration */}
         <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex flex-col items-center md:items-start">
+          <div className="flex flex-col items-center md:items-start text-left">
             <span className="font-mono text-[10px] text-gray-400">
               © {currentYear} Print Vision Pakistan Ltd. All rights reserved.
             </span>
-            <span className="font-mono text-[8px] text-gray-500 mt-1 uppercase tracking-widest">
-              Commercial Registration • FSD Textile Association #338-990-1
-            </span>
+            <div className="flex items-center gap-2 mt-1 flex-wrap">
+              <span className="font-mono text-[8px] text-gray-500 uppercase tracking-widest">
+                Commercial Registration • FSD Textile Association #338-990-1
+              </span>
+              <span className="text-gray-600 text-[8px]">•</span>
+              <button 
+                onClick={() => onScrollToSection('admin')}
+                className="font-mono text-[9px] text-[#F5A623] hover:text-white uppercase tracking-wider font-bold transition-colors cursor-pointer flex items-center gap-1"
+              >
+                <span>Admin Login 🔒</span>
+              </button>
+            </div>
           </div>
 
           {/* Barcode line */}

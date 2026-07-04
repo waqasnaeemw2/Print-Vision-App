@@ -160,21 +160,6 @@ export default function App() {
         </svg>
       </motion.a>
 
-      {/* Floating Admin Settings / Edit Copy & Images Toggle */}
-      <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={() => setIsAdminOpen(true)}
-        className="fixed bottom-6 left-6 z-40 w-12 h-12 rounded-full bg-white hover:bg-slate-50 text-[#111B47] shadow-2xl border border-gray-200 flex items-center justify-center cursor-pointer hover:border-amber-400 group transition-all"
-        title="Edit site details & images"
-      >
-        <Settings size={20} className="group-hover:rotate-45 transition-transform duration-300" />
-        <span className="absolute -top-1 -right-1 flex h-3 w-3">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E31E2B] opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-3 w-3 bg-[#E31E2B]"></span>
-        </span>
-      </motion.button>
-
       {/* Interactive Admin Editor Sidebar */}
       <AdminEditor
         isOpen={isAdminOpen}

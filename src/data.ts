@@ -62,19 +62,19 @@ export const CATALOG_ITEMS: CatalogItem[] = [
     features: ['Zero smudge ink technology', 'Perfect readability on all POS scanner laser grades', 'Pre-sequenced serial printing', 'Moisture resistant']
   },
   {
-    id: 'insert-cards-1',
-    type: 'insert-cards',
-    title: 'Insert & Thank-You cards',
-    shortDescription: 'Direct-to-consumer branded insert booklets and cards.',
-    fullDescription: 'Add a personal, premium touch inside every shipping parcel. Printed on elegant matte boards, our inserts tell your brand’s origin story, detail care instructions for linen, or offer cross-promotional coupon codes to keep buyers coming back.',
-    imageUrl: 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&q=80&w=600',
+    id: 'satin-labels-1',
+    type: 'satin-labels',
+    title: 'Premium Silky Satin Printed Labels',
+    shortDescription: 'Luxurious silky-soft printed brand ribbons for high-end shirts and activewear.',
+    fullDescription: 'Add an elegant, soft feel to your apparel. Our silky satin printed labels are manufactured using premium double-face satin ribbons. Printed using wash-resistant, non-fade ink to survive rigorous washing cycles while providing premium skin comfort.',
+    imageUrl: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&q=80&w=600',
     specs: [
-      { label: 'Stock Weight', value: '250 GSM to 350 GSM Art Card' },
-      { label: 'Coating', value: 'Soft-touch velvet velvet laminate, aqueous matte' },
-      { label: 'Format', value: 'Single card, bi-fold, or concertina booklets' },
-      { label: 'Gilding', value: 'Edge foil gilding available in multiple colors' }
+      { label: 'Ribbon Type', value: 'Double-Face Silky Polyester Satin' },
+      { label: 'Print Ink', value: 'Anti-Fade Eco Wash Resistant Inks' },
+      { label: 'Folds Offered', value: 'Loop Fold, Flat Ribbon Cut, Centerfold' },
+      { label: 'Edge Style', value: 'Pre-Sealed Ultrasonic Soft-Cut' }
     ],
-    features: ['High-definition offset print quality', 'Double-sided printing included', 'Elegant haptic textures']
+    features: ['Silky soft skin contact', 'High-definition text legibility', 'Withstands harsh enzyme washes']
   },
   {
     id: 'printed-bags-1',
@@ -151,9 +151,9 @@ export function calculatePrintCost(
       setupFee = 5000;
       productionDays = 14;
       break;
-    case 'insert-cards':
-      basePricePerUnit = 4.0;
-      setupFee = 1200;
+    case 'satin-labels':
+      basePricePerUnit = 2.0;
+      setupFee = 1000;
       productionDays = 5;
       break;
     case 'printed-bags':

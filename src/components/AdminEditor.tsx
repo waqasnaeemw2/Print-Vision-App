@@ -80,14 +80,17 @@ export default function AdminEditor({ isOpen, onClose, siteConfig, onUpdate, onR
     const normalizedUser = username.trim().toLowerCase();
     const userPassword = password.trim();
 
-    // Support flexible administrative passwords so user never gets locked out
-    if (normalizedUser === 'admin' && (userPassword === 'printvision2026' || userPassword === 'admin' || userPassword === '3027000073')) {
+    // Support flexible administrative passwords including custom account for Waqas
+    const isAdminUser = normalizedUser === 'admin' || normalizedUser === 'waqas' || normalizedUser === 'waqas.naeem.w2@gmail.com';
+    const isValidPass = userPassword === 'printvision2026' || userPassword === 'admin' || userPassword === '3027000073' || userPassword === 'waqas' || userPassword === 'waqas123';
+
+    if (isAdminUser && isValidPass) {
       setIsLoggedIn(true);
       localStorage.setItem('pv_admin_logged_in', 'true');
       setAuthError('');
       setUsername('');
       setPassword('');
-      showToast('Login successful! Welcome to Print Vision Portal.');
+      showToast('Login successful! Welcome Waqas to Print Vision Admin Portal.');
     } else {
       setAuthError('Invalid administrative username or passcode. Please try again.');
     }
@@ -190,9 +193,9 @@ export function calculatePrintCost(
       setupFee = 5000;
       productionDays = 14;
       break;
-    case 'insert-cards':
-      basePricePerUnit = 4.0;
-      setupFee = 1200;
+    case 'satin-labels':
+      basePricePerUnit = 2.0;
+      setupFee = 1000;
       productionDays = 5;
       break;
     case 'printed-bags':
