@@ -43,9 +43,24 @@ export default function App() {
     const savedCatalog = localStorage.getItem('printvision_catalog_config');
     const savedContact = localStorage.getItem('printvision_contact_config');
 
+    let finalCatalog = CATALOG_ITEMS;
+    if (savedCatalog) {
+      try {
+        const parsed = JSON.parse(savedCatalog);
+        const hasStaleItems = parsed.some((item: any) => item.id === 'insert-cards-1' || item.type === 'insert-cards');
+        if (!hasStaleItems && parsed.length > 0) {
+          finalCatalog = parsed;
+        } else {
+          localStorage.removeItem('printvision_catalog_config');
+        }
+      } catch (e) {
+        // Fall back to clean default items
+      }
+    }
+
     return {
       hero: savedHero ? JSON.parse(savedHero) : defaultHero,
-      catalogItems: savedCatalog ? JSON.parse(savedCatalog) : CATALOG_ITEMS,
+      catalogItems: finalCatalog,
       contact: savedContact ? JSON.parse(savedContact) : defaultContact
     };
   });

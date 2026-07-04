@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Sparkles, CheckCircle, Award, Printer, ShieldCheck, Layers } from 'lucide-react';
+import { ArrowRight, Sparkles, CheckCircle, Printer } from 'lucide-react';
 import { motion } from 'motion/react';
 import SmartImage from './SmartImage';
 
@@ -10,6 +10,185 @@ interface HeroProps {
   subtext?: string;
   images?: string[];
 }
+
+// Sophisticated animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.12,
+      delayChildren: 0.1,
+    }
+  }
+};
+
+const subtextVariants = {
+  hidden: { opacity: 0, y: -20, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      type: "spring",
+      stiffness: 120,
+      damping: 14
+    }
+  }
+};
+
+const headlineVariants = {
+  hidden: { opacity: 0, y: 35 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 65,
+      damping: 15,
+      mass: 1.1
+    }
+  }
+};
+
+const descriptionVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 70,
+      damping: 16
+    }
+  }
+};
+
+const actionVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 80,
+      damping: 15
+    }
+  }
+};
+
+const capabilityVariants = {
+  hidden: { opacity: 0, y: 15 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 70,
+      damping: 14,
+      staggerChildren: 0.12,
+      delayChildren: 0.55
+    }
+  }
+};
+
+const capabilityItemVariants = {
+  hidden: { opacity: 0, x: -15 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      type: "spring",
+      stiffness: 90,
+      damping: 12
+    }
+  }
+};
+
+// CMYK plate mark variants
+const cmykPlateVariants = {
+  hidden: { opacity: 0, scale: 0.4, rotate: -180 },
+  visible: (custom: number) => ({
+    opacity: 0.15,
+    scale: 1,
+    rotate: 0,
+    transition: {
+      type: "spring",
+      stiffness: 100,
+      damping: 14,
+      delay: custom * 0.12
+    }
+  })
+};
+
+// Elastic paper drop physics for textile brand assets
+const card1Variants = {
+  hidden: { opacity: 0, x: -90, y: -70, rotate: -30, scale: 0.75 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    y: 0,
+    rotate: -8,
+    scale: 1,
+    transition: {
+      type: "spring",
+      stiffness: 65,
+      damping: 14,
+      delay: 0.35
+    }
+  }
+};
+
+const card2Variants = {
+  hidden: { opacity: 0, x: 90, y: -60, rotate: 30, scale: 0.75 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    y: 0,
+    rotate: 6,
+    scale: 1,
+    transition: {
+      type: "spring",
+      stiffness: 65,
+      damping: 14,
+      delay: 0.5
+}
+  }
+};
+
+const card3Variants = {
+  hidden: { opacity: 0, x: -80, y: 80, rotate: -25, scale: 0.75 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    y: 0,
+    rotate: -4,
+    scale: 1,
+    transition: {
+      type: "spring",
+      stiffness: 70,
+      damping: 15,
+      delay: 0.65
+    }
+  }
+};
+
+const card4Variants = {
+  hidden: { opacity: 0, x: 80, y: 80, rotate: 25, scale: 0.75 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    y: 0,
+    rotate: 8,
+    scale: 1,
+    transition: {
+      type: "spring",
+      stiffness: 70,
+      damping: 15,
+      delay: 0.8
+    }
+  }
+};
 
 export default function Hero({ 
   onScrollToSection,
@@ -29,43 +208,49 @@ export default function Hero({
       <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#171B54_1.5px,transparent_1.5px)] [background-size:24px_24px]"></div>
       
       {/* Decorative CMYK Plate Marks in Background */}
-      <div className="absolute top-12 right-12 z-0 opacity-15 pointer-events-none hidden xl:flex gap-4">
-        <div className="flex flex-col items-center">
+      <div className="absolute top-12 right-12 z-0 pointer-events-none hidden xl:flex gap-4">
+        <motion.div custom={1} variants={cmykPlateVariants} initial="hidden" animate="visible" className="flex flex-col items-center">
           <div className="w-8 h-8 rounded-full border-2 border-dashed border-[#00FFFF] animate-spin-slow flex items-center justify-center">
             <span className="text-[8px] font-mono font-bold text-[#00FFFF]">C</span>
           </div>
           <span className="text-[7px] font-mono mt-1 text-[#00FFFF]">CYAN PLATE</span>
-        </div>
-        <div className="flex flex-col items-center">
+        </motion.div>
+        
+        <motion.div custom={2} variants={cmykPlateVariants} initial="hidden" animate="visible" className="flex flex-col items-center">
           <div className="w-8 h-8 rounded-full border-2 border-dashed border-[#FF00FF] animate-spin-slow flex items-center justify-center">
             <span className="text-[8px] font-mono font-bold text-[#FF00FF]">M</span>
           </div>
           <span className="text-[7px] font-mono mt-1 text-[#FF00FF]">MAGENTA</span>
-        </div>
-        <div className="flex flex-col items-center">
+        </motion.div>
+        
+        <motion.div custom={3} variants={cmykPlateVariants} initial="hidden" animate="visible" className="flex flex-col items-center">
           <div className="w-8 h-8 rounded-full border-2 border-dashed border-[#FFFF00] animate-spin-slow flex items-center justify-center">
             <span className="text-[8px] font-mono font-bold text-[#FFFF00]">Y</span>
           </div>
           <span className="text-[7px] font-mono mt-1 text-[#FFFF00]">YELLOW</span>
-        </div>
-        <div className="flex flex-col items-center">
+        </motion.div>
+        
+        <motion.div custom={4} variants={cmykPlateVariants} initial="hidden" animate="visible" className="flex flex-col items-center">
           <div className="w-8 h-8 rounded-full border-2 border-dashed border-[#111B47] animate-spin-slow flex items-center justify-center">
             <span className="text-[8px] font-mono font-bold text-[#111B47]">K</span>
           </div>
           <span className="text-[7px] font-mono mt-1 text-[#111B47]">BLACK</span>
-        </div>
+        </motion.div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           
           {/* Hero Copy (7 Cols) */}
-          <div className="lg:col-span-7 flex flex-col items-start text-left">
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="lg:col-span-7 flex flex-col items-start text-left"
+          >
             {/* Elegant luxury chip */}
             <motion.div 
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              variants={subtextVariants}
               className="inline-flex items-center gap-2 bg-[#171B54]/5 text-[#171B54] border border-[#171B54]/10 rounded-full px-3.5 py-1.5 font-mono text-[11px] font-semibold tracking-wider uppercase mb-6"
             >
               <Sparkles size={12} className="text-[#F5A623] animate-pulse" />
@@ -73,22 +258,20 @@ export default function Hero({
             </motion.div>
 
             {/* Main Display Heading */}
-            <motion.h1 
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.15 }}
-              className="font-display font-black text-5xl sm:text-6xl md:text-7xl lg:text-7.5xl xl:text-8xl text-[#171B54] tracking-tighter leading-[1.02]"
-            >
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#171B54] via-[#E31E2B] to-[#F5A623]">
-                {headline}
-              </span>
-            </motion.h1>
+            <div className="overflow-hidden py-1">
+              <motion.h1 
+                variants={headlineVariants}
+                className="font-display font-black text-5xl sm:text-6xl md:text-7xl lg:text-7.5xl xl:text-8xl text-[#171B54] tracking-tighter leading-[1.02]"
+              >
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#171B54] via-[#E31E2B] to-[#F5A623]">
+                  {headline}
+                </span>
+              </motion.h1>
+            </div>
 
             {/* Description Lede */}
             <motion.p 
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
+              variants={descriptionVariants}
               className="mt-8 font-sans text-base sm:text-lg lg:text-xl text-gray-600 leading-relaxed max-w-3xl text-left font-medium"
             >
               {description}
@@ -96,61 +279,68 @@ export default function Hero({
 
             {/* Call to Actions */}
             <motion.div 
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.45 }}
+              variants={actionVariants}
               className="mt-10 flex flex-wrap gap-4 items-center"
             >
-              <button 
+              <motion.button 
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => onScrollToSection('studio')}
-                className="group flex items-center gap-2.5 bg-[#171B54] hover:bg-[#E31E2B] text-white font-sans font-extrabold text-base px-8 py-4.5 rounded-full shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 cursor-pointer"
+                className="group flex items-center gap-2.5 bg-[#171B54] hover:bg-[#E31E2B] text-white font-sans font-extrabold text-base px-8 py-4.5 rounded-full shadow-xl hover:shadow-2xl transition-all cursor-pointer"
               >
                 Launch Customizer Studio
                 <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
-              </button>
+              </motion.button>
               
-              <button 
+              <motion.button 
+                whileHover={{ scale: 1.03, backgroundColor: "rgba(23, 27, 84, 0.05)" }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => onScrollToSection('estimator')}
-                className="font-sans font-extrabold text-base text-[#171B54] hover:bg-[#171B54]/5 border border-gray-300 rounded-full px-7 py-4.5 transition-all cursor-pointer"
+                className="font-sans font-extrabold text-base text-[#171B54] border border-gray-300 rounded-full px-7 py-4.5 transition-all cursor-pointer"
               >
                 Interactive Cost Estimator
-              </button>
+              </motion.button>
             </motion.div>
 
             {/* Quick Micro-Capabilities */}
             <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
+              variants={capabilityVariants}
               className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-gray-200/80 pt-8 w-full max-w-lg"
             >
-              <div className="flex items-start gap-2.5">
+              <motion.div variants={capabilityItemVariants} className="flex items-start gap-2.5">
                 <Printer size={18} className="text-[#E31E2B] mt-0.5 shrink-0" />
                 <div className="flex flex-col">
                   <span className="font-sans font-bold text-xs text-[#171B54]">High-Speed Offset Presses</span>
                   <span className="font-sans text-[11px] text-gray-500">Heidelberg accuracy with 600 DPI dot alignment</span>
                 </div>
-              </div>
-              <div className="flex items-start gap-2.5">
+              </motion.div>
+              
+              <motion.div variants={capabilityItemVariants} className="flex items-start gap-2.5">
                 <CheckCircle size={18} className="text-[#F5A623] mt-0.5 shrink-0" />
                 <div className="flex flex-col">
                   <span className="font-sans font-bold text-xs text-[#171B54]">Double-Sided Premium Foil Trims</span>
                   <span className="font-sans text-[11px] text-gray-500">Spot-UV, gold-foil stamping, and velvety cardstocks</span>
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
-          </div>
+          </motion.div>
 
           {/* Hero Visual Showcase (5 Cols) - Highly Animated Collage with 4 Visuals */}
           <div className="lg:col-span-5 relative h-[520px] sm:h-[580px] w-full flex items-center justify-center select-none overflow-visible">
             
-            {/* Visual background circle swirl */}
-            <div className="absolute w-[380px] sm:w-[460px] h-[380px] sm:h-[460px] rounded-full bg-gradient-to-tr from-[#171B54]/5 via-[#E31E2B]/5 to-[#F5A623]/10 -z-10 animate-spin-slow"></div>
+            {/* Visual background circle swirl with high-quality loading spin-up */}
+            <motion.div 
+              initial={{ scale: 0.7, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
+              className="absolute w-[380px] sm:w-[460px] h-[380px] sm:h-[460px] rounded-full bg-gradient-to-tr from-[#171B54]/5 via-[#E31E2B]/5 to-[#F5A623]/10 -z-10 animate-spin-slow"
+            ></motion.div>
 
             {/* Micro Badge: Active Print Press Status */}
             <motion.div 
-              animate={{ y: [0, -6, 0] }}
-              transition={{ repeat: Infinity, duration: 3.5, ease: 'easeInOut' }}
+              initial={{ scale: 0.8, opacity: 0, y: -20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              transition={{ type: "spring", stiffness: 100, damping: 12, delay: 0.7 }}
               className="absolute top-0 right-4 sm:right-10 z-30 bg-white/95 backdrop-blur shadow-xl rounded-xl p-2.5 border border-gray-100 flex items-center gap-2.5"
             >
               <div className="w-8 h-8 rounded-lg bg-[#171B54] flex items-center justify-center text-white">
@@ -179,11 +369,11 @@ export default function Hero({
 
             {/* VISUAL 1: Premium FSC Art-Card Hang Tag */}
             <motion.div 
-              initial={{ opacity: 0, x: -50, y: -40, rotate: -15, scale: 0.9 }}
-              animate={{ opacity: 1, x: 0, y: 0, rotate: -8, scale: 1 }}
+              variants={card1Variants}
+              initial="hidden"
+              animate="visible"
               whileHover={{ rotate: -2, scale: 1.05, zIndex: 40 }}
-              transition={{ duration: 0.8, delay: 0.1 }}
-              className="absolute w-[150px] sm:w-[185px] h-[210px] sm:h-[260px] top-12 left-2 sm:left-4 rounded-xl overflow-hidden border-[4px] border-white shadow-lg z-10 hover:shadow-2xl transition-all duration-300 group flex items-stretch"
+              className="absolute w-[150px] sm:w-[185px] h-[210px] sm:h-[260px] top-12 left-2 sm:left-4 rounded-xl overflow-hidden border-[4px] border-white shadow-lg z-10 hover:shadow-2xl transition-all duration-300 group flex items-stretch cursor-pointer"
             >
               <SmartImage 
                 src={images[0]} 
@@ -198,11 +388,11 @@ export default function Hero({
 
             {/* VISUAL 2: Partner-Woven Soft Collar Brand Label */}
             <motion.div 
-              initial={{ opacity: 0, x: 50, y: -40, rotate: 15, scale: 0.9 }}
-              animate={{ opacity: 1, x: 0, y: 0, rotate: 6, scale: 1 }}
+              variants={card2Variants}
+              initial="hidden"
+              animate="visible"
               whileHover={{ rotate: 1, scale: 1.05, zIndex: 40 }}
-              transition={{ duration: 0.8, delay: 0.25 }}
-              className="absolute w-[160px] sm:w-[190px] h-[140px] sm:h-[160px] top-24 right-2 sm:right-6 rounded-xl overflow-hidden border-[4px] border-white shadow-lg z-20 hover:shadow-2xl transition-all duration-300 group flex items-stretch"
+              className="absolute w-[160px] sm:w-[190px] h-[140px] sm:h-[160px] top-24 right-2 sm:right-6 rounded-xl overflow-hidden border-[4px] border-white shadow-lg z-20 hover:shadow-2xl transition-all duration-300 group flex items-stretch cursor-pointer"
             >
               <SmartImage 
                 src={images[1]} 
@@ -217,11 +407,11 @@ export default function Hero({
 
             {/* VISUAL 3: Luxury Custom Rigid Cardboard Packaging Box */}
             <motion.div 
-              initial={{ opacity: 0, x: -40, y: 50, rotate: -10, scale: 0.9 }}
-              animate={{ opacity: 1, x: 0, y: 0, rotate: -4, scale: 1 }}
+              variants={card3Variants}
+              initial="hidden"
+              animate="visible"
               whileHover={{ rotate: 0, scale: 1.05, zIndex: 40 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="absolute w-[170px] sm:w-[210px] h-[150px] sm:h-[185px] bottom-16 left-6 sm:left-12 rounded-xl overflow-hidden border-[4px] border-white shadow-xl z-25 hover:shadow-2xl transition-all duration-300 group flex items-stretch"
+              className="absolute w-[170px] sm:w-[210px] h-[150px] sm:h-[185px] bottom-16 left-6 sm:left-12 rounded-xl overflow-hidden border-[4px] border-white shadow-xl z-25 hover:shadow-2xl transition-all duration-300 group flex items-stretch cursor-pointer"
             >
               <SmartImage 
                 src={images[2]} 
@@ -236,11 +426,11 @@ export default function Hero({
 
             {/* VISUAL 4: Precision Thermal Barcoding Sticker */}
             <motion.div 
-              initial={{ opacity: 0, x: 40, y: 50, rotate: 10, scale: 0.9 }}
-              animate={{ opacity: 1, x: 0, y: 0, rotate: 8, scale: 1 }}
+              variants={card4Variants}
+              initial="hidden"
+              animate="visible"
               whileHover={{ rotate: 2, scale: 1.05, zIndex: 40 }}
-              transition={{ duration: 0.8, delay: 0.55 }}
-              className="absolute w-[150px] sm:w-[175px] h-[140px] sm:h-[160px] bottom-10 right-4 sm:right-8 rounded-xl overflow-hidden border-[4px] border-white shadow-lg z-30 hover:shadow-2xl transition-all duration-300 group flex items-stretch"
+              className="absolute w-[150px] sm:w-[175px] h-[140px] sm:h-[160px] bottom-10 right-4 sm:right-8 rounded-xl overflow-hidden border-[4px] border-white shadow-lg z-30 hover:shadow-2xl transition-all duration-300 group flex items-stretch cursor-pointer"
             >
               <SmartImage 
                 src={images[3]} 
