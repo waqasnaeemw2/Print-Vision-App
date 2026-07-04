@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  --color-brand-blue: #111B47;
+  --color-brand-red: #E31E2B;
+  --color-brand-gold: #D4AF37;
+  --color-brand-gold-light: #F3E5AB;
+}
+
+@layer utilities {
+  /* Elegant custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0f172a;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #D4AF37;
+  }
+}
+
+/* Custom animated barcode decorative line */
+.barcode-accent {
+  height: 24px;
+  background-image: repeating-linear-gradient(90deg, 
+    currentColor 0px, currentColor 2px, transparent 2px, transparent 6px,
+    currentColor 6px, currentColor 7px, transparent 7px, transparent 12px,
+    currentColor 12px, currentColor 16px, transparent 16px, transparent 20px);
+}
+

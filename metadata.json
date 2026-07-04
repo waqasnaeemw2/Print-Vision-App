@@ -1,0 +1,6 @@
+{
+  "name": "Print Vision",
+  "description": "Premium Printing and Packaging Solutions Portal for the Apparel and Home Textile Industry",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
