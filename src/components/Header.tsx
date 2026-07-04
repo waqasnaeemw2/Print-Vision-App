@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, Phone, ShoppingBag, Eye, Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Logo from './Logo';
-import WordPressSettingsModal from './WordPressSettingsModal';
 
 interface HeaderProps {
   onScrollToSection: (sectionId: string) => void;
@@ -12,7 +11,6 @@ interface HeaderProps {
 export default function Header({ onScrollToSection, phone = "0302-7000073" }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [showWordPressModal, setShowWordPressModal] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -27,7 +25,8 @@ export default function Header({ onScrollToSection, phone = "0302-7000073" }: He
     { name: 'Digital Catalog', id: 'catalog' },
     { name: 'Cost Estimator', id: 'estimator' },
     { name: 'Why Print Vision', id: 'why' },
-    { name: 'Get a Quote', id: 'contact' }
+    { name: 'Get a Quote', id: 'contact' },
+    { name: 'Admin Portal 🔒', id: 'admin' }
   ];
 
   const handleLinkClick = (id: string) => {
@@ -131,11 +130,6 @@ export default function Header({ onScrollToSection, phone = "0302-7000073" }: He
           </motion.div>
         )}
       </AnimatePresence>
-
-      <WordPressSettingsModal 
-        isOpen={showWordPressModal} 
-        onClose={() => setShowWordPressModal(false)} 
-      />
     </header>
   );
 }

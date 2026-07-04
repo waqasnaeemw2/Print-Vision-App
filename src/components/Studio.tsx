@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Sparkles, HelpCircle, Layers, Sliders, Check, FileText } from 'lucide-react';
+import { Sparkles, HelpCircle, Layers, Sliders, Check, FileText, Activity } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { CustomDesign, ProductType } from '../types';
 import { COLOR_PRESETS, FONT_PAIRINGS, FINISH_OPTIONS } from '../data';
-import WordPressExportButton from './WordPressExportButton';
 
 interface StudioProps {
   onDesignSubmit: (design: CustomDesign) => void;
@@ -468,29 +467,17 @@ export default function Studio({ onDesignSubmit }: StudioProps) {
               </div>
             </div>
 
-            {/* WordPress Prototyping Link Exporter */}
-            <div className="mt-4 bg-gradient-to-r from-[#171B54]/5 to-transparent border border-[#171B54]/10 rounded-xl p-4 w-full flex flex-col sm:flex-row items-center justify-between gap-3 text-left">
-              <div className="flex-1">
-                <span className="block font-sans font-bold text-xs text-[#171B54]">Direct WordPress Publishing</span>
-                <span className="block font-sans text-[10px] text-gray-500 leading-normal mt-0.5">Export this fully calibrated digital spec as a WooCommerce product or post immediately.</span>
+            {/* High-Fidelity Industrial Specs Lock */}
+            <div className="mt-4 bg-gradient-to-r from-[#171B54]/5 to-[#E31E2B]/5 border border-[#171B54]/10 rounded-xl p-4 w-full flex flex-col sm:flex-row items-center justify-between gap-4 text-left">
+              <div className="flex-1 flex items-start gap-3">
+                <Activity size={20} className="text-[#E31E2B] mt-0.5 shrink-0 animate-pulse" />
+                <div>
+                  <span className="block font-sans font-bold text-xs text-[#171B54]">Heidelberg Calibration Lock</span>
+                  <span className="block font-sans text-[10px] text-gray-500 leading-normal mt-0.5">
+                    This digital prototype is fully calibrated for automated plate separation. When submitted, our Faisalabad press syncs Pantone formulas to match your brand specifications precisely.
+                  </span>
+                </div>
               </div>
-              <WordPressExportButton
-                type="design"
-                data={{
-                  productType,
-                  brandName: brandName.toUpperCase(),
-                  tagline: tagline.toUpperCase(),
-                  fontStyle,
-                  textColor: customText,
-                  bgColor: customBg,
-                  finishType: finish,
-                  widthMm,
-                  heightMm,
-                  quantity
-                }}
-                variant="primary"
-                className="w-full sm:w-auto"
-              />
             </div>
 
           </div>

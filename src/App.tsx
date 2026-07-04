@@ -69,6 +69,10 @@ export default function App() {
   };
 
   const handleScrollToSection = (sectionId: string) => {
+    if (sectionId === 'admin') {
+      setIsAdminOpen(true);
+      return;
+    }
     if (sectionId === 'top') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;

@@ -101,10 +101,10 @@ export default function Catalog({ catalogItems }: CatalogProps) {
                 {/* Card Body content */}
                 <div className="p-6 flex-1 flex flex-col justify-between">
                   <div>
-                    <h3 className="font-display font-bold text-lg text-[#171B54] group-hover:text-amber-600 transition-colors">
+                    <h3 className="font-display font-black text-xl text-[#171B54] group-hover:text-amber-600 transition-colors">
                       {item.title}
                     </h3>
-                    <p className="font-sans text-xs text-gray-500 mt-2 leading-relaxed">
+                    <p className="font-sans text-sm text-gray-500 mt-2.5 leading-relaxed">
                       {item.shortDescription}
                     </p>
                   </div>

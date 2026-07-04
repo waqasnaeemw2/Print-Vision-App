@@ -3,7 +3,6 @@ import { Sliders, HelpCircle, Calendar, ShieldCheck, DollarSign, Calculator } fr
 import { motion, AnimatePresence } from 'motion/react';
 import { ProductType, EstimateResult } from '../types';
 import { calculatePrintCost } from '../data';
-import WordPressExportButton from './WordPressExportButton';
 
 interface EstimatorProps {
   onEstimateSelect: (estimate: { type: ProductType; quantity: number; costBreakdown: EstimateResult }) => void;
@@ -259,7 +258,7 @@ export default function Estimator({ onEstimateSelect }: EstimatorProps) {
               </div>
 
               {/* Action Proceed to Form */}
-              <div className="mt-8 pt-6 border-t border-white/10 relative z-10 space-y-3">
+              <div className="mt-8 pt-6 border-t border-white/10 relative z-10 space-y-4">
                 <a
                   href="#contact"
                   onClick={handleApplyEstimate}
@@ -267,22 +266,6 @@ export default function Estimator({ onEstimateSelect }: EstimatorProps) {
                 >
                   Confirm Quote &amp; Request Samples
                 </a>
-
-                <div className="flex flex-col gap-2">
-                  <span className="text-[10px] text-gray-300 font-sans text-center block">
-                    — Or —
-                  </span>
-                  <WordPressExportButton 
-                    type="estimate"
-                    data={{
-                      type: productType,
-                      quantity: quantity,
-                      costBreakdown: estimate
-                    }}
-                    variant="secondary"
-                    className="w-full text-center py-3.5 flex justify-center items-center font-bold text-xs"
-                  />
-                </div>
 
                 <span className="font-mono text-[8px] text-center block text-gray-400 mt-2 uppercase tracking-widest">
                   Setup fee refunded on orders over 10,000 units

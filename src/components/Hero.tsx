@@ -77,7 +77,7 @@ export default function Hero({
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.15 }}
-              className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-[#171B54] tracking-tight leading-[1.1]"
+              className="font-display font-black text-5xl sm:text-6xl md:text-7xl lg:text-7.5xl xl:text-8xl text-[#171B54] tracking-tighter leading-[1.02]"
             >
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#171B54] via-[#E31E2B] to-[#F5A623]">
                 {headline}
@@ -89,7 +89,7 @@ export default function Hero({
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="mt-6 font-sans text-sm sm:text-base text-gray-600 leading-relaxed max-w-xl text-left"
+              className="mt-8 font-sans text-base sm:text-lg lg:text-xl text-gray-600 leading-relaxed max-w-3xl text-left font-medium"
             >
               {description}
             </motion.p>
@@ -99,19 +99,19 @@ export default function Hero({
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.45 }}
-              className="mt-8 flex flex-wrap gap-4 items-center"
+              className="mt-10 flex flex-wrap gap-4 items-center"
             >
               <button 
                 onClick={() => onScrollToSection('studio')}
-                className="group flex items-center gap-2 bg-[#171B54] hover:bg-[#1E293B] text-white font-sans font-bold text-sm px-7 py-4 rounded-full shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5 cursor-pointer"
+                className="group flex items-center gap-2.5 bg-[#171B54] hover:bg-[#E31E2B] text-white font-sans font-extrabold text-base px-8 py-4.5 rounded-full shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 cursor-pointer"
               >
                 Launch Customizer Studio
-                <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+                <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
               </button>
               
               <button 
                 onClick={() => onScrollToSection('estimator')}
-                className="font-sans font-bold text-sm text-[#171B54] hover:bg-[#171B54]/5 border border-gray-300 rounded-full px-6 py-4 transition-all cursor-pointer"
+                className="font-sans font-extrabold text-base text-[#171B54] hover:bg-[#171B54]/5 border border-gray-300 rounded-full px-7 py-4.5 transition-all cursor-pointer"
               >
                 Interactive Cost Estimator
               </button>
