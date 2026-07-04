@@ -3,7 +3,7 @@ import path from 'path';
 
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const PORT = process.env.PORT || 3000;
 
   // Middleware for body parsing
   app.use(express.json({ limit: '10mb' }));
@@ -358,9 +358,15 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`PrintVision Full-Stack server is actively listening on http://0.0.0.0:${PORT}`);
-  });
+  if (process.env.PORT) {
+    app.listen(PORT, () => {
+      console.log(`PrintVision Full-Stack server is actively listening on Port ${PORT}`);
+    });
+  } else {
+    app.listen(Number(PORT), '0.0.0.0', () => {
+      console.log(`PrintVision Full-Stack server is actively listening on http://0.0.0.0:${PORT}`);
+    });
+  }
 }
 
 startServer();
