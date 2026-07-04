@@ -4,10 +4,23 @@ import Logo from './Logo';
 
 interface FooterProps {
   onScrollToSection: (sectionId: string) => void;
+  contact?: {
+    address: string;
+    phone: string;
+    email: string;
+    whatsapp: string;
+  };
 }
 
-export default function Footer({ onScrollToSection }: FooterProps) {
+export default function Footer({ onScrollToSection, contact }: FooterProps) {
   const currentYear = new Date().getFullYear();
+  
+  const contactDetails = contact || {
+    address: "Eid Gah Road, Faisalabad, Punjab, Pakistan",
+    phone: "0302-7000073",
+    email: "info@printvisionpk.com",
+    whatsapp: "923027000073"
+  };
 
   return (
     <footer className="bg-[#111B47] text-white pt-16 pb-8 relative overflow-hidden border-t border-white/5">
@@ -91,15 +104,15 @@ export default function Footer({ onScrollToSection }: FooterProps) {
             <ul className="space-y-3.5 font-sans text-xs text-gray-300">
               <li className="flex items-start gap-2.5">
                 <MapPin size={15} className="text-[#E31E2B] mt-0.5 shrink-0" />
-                <span>Eid Gah Road, Faisalabad, Punjab, Pakistan</span>
+                <span>{contactDetails.address}</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <Phone size={15} className="text-[#E31E2B] shrink-0" />
-                <a href="tel:03027000073" className="hover:text-white transition-colors">0302-7000073</a>
+                <a href={`tel:${contactDetails.phone.replace(/[^0-9+]/g, '')}`} className="hover:text-white transition-colors">{contactDetails.phone}</a>
               </li>
               <li className="flex items-center gap-2.5">
                 <Mail size={15} className="text-[#E31E2B] shrink-0" />
-                <a href="mailto:info@printvisionpk.com" className="hover:text-white transition-colors">info@printvisionpk.com</a>
+                <a href={`mailto:${contactDetails.email}`} className="hover:text-white transition-colors">{contactDetails.email}</a>
               </li>
             </ul>
           </div>

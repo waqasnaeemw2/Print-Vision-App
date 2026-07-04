@@ -6,9 +6,10 @@ import WordPressSettingsModal from './WordPressSettingsModal';
 
 interface HeaderProps {
   onScrollToSection: (sectionId: string) => void;
+  phone?: string;
 }
 
-export default function Header({ onScrollToSection }: HeaderProps) {
+export default function Header({ onScrollToSection, phone = "0302-7000073" }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [showWordPressModal, setShowWordPressModal] = useState(false);
@@ -72,11 +73,11 @@ export default function Header({ onScrollToSection }: HeaderProps) {
               <span>WP Sync</span>
             </button>
             <a 
-              href="tel:03027000073" 
+              href={`tel:${phone.replace(/[^0-9+]/g, '')}`} 
               className="hidden xl:flex items-center gap-2 font-mono text-xs font-semibold text-[#171B54] bg-[#F5F6FB] hover:bg-[#E7E8F2] border border-[#E7E8F2] rounded-full px-4 py-2 transition-all cursor-pointer"
             >
               <Phone size={14} className="text-[#E31E2B]" />
-              0302-7000073
+              {phone}
             </a>
             <button 
               onClick={() => handleLinkClick('contact')}

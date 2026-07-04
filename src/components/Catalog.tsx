@@ -3,8 +3,13 @@ import { Tag, Check, ArrowRight, ShieldCheck, Eye, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { CatalogItem, ProductType } from '../types';
 import { CATALOG_ITEMS } from '../data';
+import SmartImage from './SmartImage';
 
-export default function Catalog() {
+interface CatalogProps {
+  catalogItems?: CatalogItem[];
+}
+
+export default function Catalog({ catalogItems }: CatalogProps) {
   const [selectedCategory, setSelectedColor] = useState<string>('all');
   const [activeItem, setActiveItem] = useState<CatalogItem | null>(null);
 
@@ -17,9 +22,11 @@ export default function Catalog() {
     { value: 'insert-cards', label: 'In-Box Cards & Bags' }
   ];
 
+  const itemsToUse = catalogItems || CATALOG_ITEMS;
+
   const filteredItems = selectedCategory === 'all'
-    ? CATALOG_ITEMS
-    : CATALOG_ITEMS.filter(item => item.type === selectedCategory || (selectedCategory === 'insert-cards' && (item.type === 'insert-cards' || item.type === 'printed-bags')));
+    ? itemsToUse
+    : itemsToUse.filter(item => item.type === selectedCategory || (selectedCategory === 'insert-cards' && (item.type === 'insert-cards' || item.type === 'printed-bags')));
 
   return (
     <section id="catalog" className="py-16 bg-white border-t border-[#E7E8F2]">
@@ -73,11 +80,11 @@ export default function Catalog() {
               >
                 {/* Product Imagery */}
                 <div className="h-56 overflow-hidden relative">
-                  <img 
+                  <SmartImage 
                     src={item.imageUrl} 
                     alt={item.title} 
+                    productType={item.type}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
                   />
                   <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full font-mono text-[9px] text-[#171B54] font-bold uppercase shadow-sm border border-gray-100">
                     {item.type.replace('-', ' ')}
@@ -150,7 +157,12 @@ export default function Catalog() {
               >
                 {/* Imagery cover */}
                 <div className="h-60 relative shrink-0">
-                  <img src={activeItem.imageUrl} alt={activeItem.title} className="w-full h-full object-cover" />
+                  <SmartImage 
+                    src={activeItem.imageUrl} 
+                    alt={activeItem.title} 
+                    productType={activeItem.type}
+                    className="w-full h-full object-cover" 
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
                   <button 
                     onClick={() => setActiveItem(null)}

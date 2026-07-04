@@ -1,12 +1,28 @@
 import React from 'react';
 import { ArrowRight, Sparkles, CheckCircle, Award, Printer, ShieldCheck, Layers } from 'lucide-react';
 import { motion } from 'motion/react';
+import SmartImage from './SmartImage';
 
 interface HeroProps {
   onScrollToSection: (sectionId: string) => void;
+  headline?: string;
+  description?: string;
+  subtext?: string;
+  images?: string[];
 }
 
-export default function Hero({ onScrollToSection }: HeroProps) {
+export default function Hero({ 
+  onScrollToSection,
+  headline = "High-Speed Commercial Apparel Print & Packaging",
+  description = "We operate advanced offset, flexographic, and rotary printing presses in Faisalabad. From luxury textured hang tags, rigid gift packages, and barcode systems, to premium woven brand labels—crafted through partner mills and fully guaranteed by us—we run long-run branding specs under tight quality checks.",
+  subtext = "PAKISTAN'S ELITE PRINTING PRESS HUB • FAISALABAD",
+  images = [
+    "https://images.unsplash.com/photo-1698932646779-916299619ad2?fm=jpg&q=80&w=400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1603252109303-2751441dd157?fm=jpg&q=80&w=400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1656543802898-41c8c46683a7?fm=jpg&q=80&w=400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1616400619175-5ebd300900cf?fm=jpg&q=80&w=400&auto=format&fit=crop"
+  ]
+}: HeroProps) {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-[#F5F6FB] via-white to-white pt-10 pb-24 lg:pt-16 lg:pb-32">
       {/* Absolute luxury background swirly grid overlay */}
@@ -53,7 +69,7 @@ export default function Hero({ onScrollToSection }: HeroProps) {
               className="inline-flex items-center gap-2 bg-[#171B54]/5 text-[#171B54] border border-[#171B54]/10 rounded-full px-3.5 py-1.5 font-mono text-[11px] font-semibold tracking-wider uppercase mb-6"
             >
               <Sparkles size={12} className="text-[#F5A623] animate-pulse" />
-              PAKISTAN'S ELITE PRINTING PRESS HUB • FAISALABAD
+              {subtext}
             </motion.div>
 
             {/* Main Display Heading */}
@@ -61,11 +77,10 @@ export default function Hero({ onScrollToSection }: HeroProps) {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.15 }}
-              className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-[#171B54] tracking-tight leading-[1.05]"
+              className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-[#171B54] tracking-tight leading-[1.1]"
             >
-              High-Speed Commercial <br className="hidden sm:inline" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#171B54] via-[#E31E2B] to-[#F5A623]">
-                Apparel Print &amp; Packaging
+                {headline}
               </span>
             </motion.h1>
 
@@ -74,9 +89,9 @@ export default function Hero({ onScrollToSection }: HeroProps) {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="mt-6 font-sans text-base sm:text-lg text-gray-600 leading-relaxed max-w-xl"
+              className="mt-6 font-sans text-sm sm:text-base text-gray-600 leading-relaxed max-w-xl text-left"
             >
-              We operate advanced offset, flexographic, and rotary printing presses in Faisalabad. From luxury textured hang tags, rigid gift packages, and barcode systems, to premium woven brand labels—crafted through partner mills and fully guaranteed by us—we run long-run branding specs under tight quality checks.
+              {description}
             </motion.p>
 
             {/* Call to Actions */}
@@ -168,11 +183,12 @@ export default function Hero({ onScrollToSection }: HeroProps) {
               animate={{ opacity: 1, x: 0, y: 0, rotate: -8, scale: 1 }}
               whileHover={{ rotate: -2, scale: 1.05, zIndex: 40 }}
               transition={{ duration: 0.8, delay: 0.1 }}
-              className="absolute w-[150px] sm:w-[185px] h-[210px] sm:h-[260px] top-12 left-2 sm:left-4 rounded-xl overflow-hidden border-[4px] border-white shadow-lg z-10 hover:shadow-2xl transition-all duration-300 group"
+              className="absolute w-[150px] sm:w-[185px] h-[210px] sm:h-[260px] top-12 left-2 sm:left-4 rounded-xl overflow-hidden border-[4px] border-white shadow-lg z-10 hover:shadow-2xl transition-all duration-300 group flex items-stretch"
             >
-              <img 
-                src="https://images.unsplash.com/photo-1698932646779-916299619ad2?fm=jpg&q=80&w=400&auto=format&fit=crop" 
+              <SmartImage 
+                src={images[0]} 
                 alt="Premium Garment Swing Tag" 
+                productType="hang-tags"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute bottom-2 left-2 bg-[#171B54] text-white px-2 py-0.5 rounded text-[8px] font-mono tracking-wider uppercase">
@@ -186,11 +202,12 @@ export default function Hero({ onScrollToSection }: HeroProps) {
               animate={{ opacity: 1, x: 0, y: 0, rotate: 6, scale: 1 }}
               whileHover={{ rotate: 1, scale: 1.05, zIndex: 40 }}
               transition={{ duration: 0.8, delay: 0.25 }}
-              className="absolute w-[160px] sm:w-[190px] h-[140px] sm:h-[160px] top-24 right-2 sm:right-6 rounded-xl overflow-hidden border-[4px] border-white shadow-lg z-20 hover:shadow-2xl transition-all duration-300 group"
+              className="absolute w-[160px] sm:w-[190px] h-[140px] sm:h-[160px] top-24 right-2 sm:right-6 rounded-xl overflow-hidden border-[4px] border-white shadow-lg z-20 hover:shadow-2xl transition-all duration-300 group flex items-stretch"
             >
-              <img 
-                src="https://images.unsplash.com/photo-1603252109303-2751441dd157?fm=jpg&q=80&w=400&auto=format&fit=crop" 
+              <SmartImage 
+                src={images[1]} 
                 alt="Fine woven brand label inside collar" 
+                productType="woven-labels"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute bottom-2 left-2 bg-[#E31E2B] text-white px-2 py-0.5 rounded text-[8px] font-mono tracking-wider uppercase">
@@ -204,11 +221,12 @@ export default function Hero({ onScrollToSection }: HeroProps) {
               animate={{ opacity: 1, x: 0, y: 0, rotate: -4, scale: 1 }}
               whileHover={{ rotate: 0, scale: 1.05, zIndex: 40 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="absolute w-[170px] sm:w-[210px] h-[150px] sm:h-[185px] bottom-16 left-6 sm:left-12 rounded-xl overflow-hidden border-[4px] border-white shadow-xl z-25 hover:shadow-2xl transition-all duration-300 group"
+              className="absolute w-[170px] sm:w-[210px] h-[150px] sm:h-[185px] bottom-16 left-6 sm:left-12 rounded-xl overflow-hidden border-[4px] border-white shadow-xl z-25 hover:shadow-2xl transition-all duration-300 group flex items-stretch"
             >
-              <img 
-                src="https://images.unsplash.com/photo-1656543802898-41c8c46683a7?fm=jpg&q=80&w=400&auto=format&fit=crop" 
+              <SmartImage 
+                src={images[2]} 
                 alt="Luxury Rigid Cardboard Box" 
+                productType="packaging-boxes"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute bottom-2 left-2 bg-[#F5A623] text-[#111B47] px-2 py-0.5 rounded text-[8px] font-mono tracking-wider font-bold uppercase">
@@ -222,11 +240,12 @@ export default function Hero({ onScrollToSection }: HeroProps) {
               animate={{ opacity: 1, x: 0, y: 0, rotate: 8, scale: 1 }}
               whileHover={{ rotate: 2, scale: 1.05, zIndex: 40 }}
               transition={{ duration: 0.8, delay: 0.55 }}
-              className="absolute w-[150px] sm:w-[175px] h-[140px] sm:h-[160px] bottom-10 right-4 sm:right-8 rounded-xl overflow-hidden border-[4px] border-white shadow-lg z-30 hover:shadow-2xl transition-all duration-300 group"
+              className="absolute w-[150px] sm:w-[175px] h-[140px] sm:h-[160px] bottom-10 right-4 sm:right-8 rounded-xl overflow-hidden border-[4px] border-white shadow-lg z-30 hover:shadow-2xl transition-all duration-300 group flex items-stretch"
             >
-              <img 
-                src="https://images.unsplash.com/photo-1616400619175-5ebd300900cf?fm=jpg&q=80&w=400&auto=format&fit=crop" 
+              <SmartImage 
+                src={images[3]} 
                 alt="Precision POS Thermal Barcode sticker" 
+                productType="barcode-stickers"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute bottom-2 left-2 bg-[#111B47] text-white px-2 py-0.5 rounded text-[8px] font-mono tracking-wider uppercase">
