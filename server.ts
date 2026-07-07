@@ -358,15 +358,9 @@ async function startServer() {
     });
   }
 
-  if (process.env.PORT) {
-    app.listen(PORT, () => {
-      console.log(`PrintVision Full-Stack server is actively listening on Port ${PORT}`);
-    });
-  } else {
-    app.listen(Number(PORT), '0.0.0.0', () => {
-      console.log(`PrintVision Full-Stack server is actively listening on http://0.0.0.0:${PORT}`);
-    });
-  }
+  app.listen(Number(PORT), '0.0.0.0', () => {
+    console.log(`PrintVision Full-Stack server is actively listening on http://0.0.0.0:${PORT}`);
+  });
 }
 
 startServer();

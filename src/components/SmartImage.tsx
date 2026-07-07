@@ -6,9 +6,12 @@ interface SmartImageProps {
   alt: string;
   className?: string;
   productType?: string;
+  imageFit?: 'cover' | 'contain' | 'fill';
+  imageScale?: number;
+  imageHeight?: number;
 }
 
-export default function SmartImage({ src, alt, className = '', productType = '' }: SmartImageProps) {
+export default function SmartImage({ src, alt, className = '', productType = '', imageFit = 'cover', imageScale = 1, imageHeight }: SmartImageProps) {
   const [hasError, setHasError] = useState(false);
 
   // Reset error state when src changes
@@ -70,12 +73,19 @@ export default function SmartImage({ src, alt, className = '', productType = '' 
   }
 
   return (
-    <img
-      src={src}
-      alt={alt}
-      onError={() => setHasError(true)}
-      className={className}
-      referrerPolicy="no-referrer"
-    />
+    <div className="w-full h-full overflow-hidden relative">
+      <img
+        src={src}
+        alt={alt}
+        onError={() => setHasError(true)}
+        className={`${className} transition-all duration-300`}
+        style={{
+          objectFit: imageFit,
+          transform: `scale(${imageScale})`,
+          height: imageHeight ? `${imageHeight}px` : undefined,
+        }}
+        referrerPolicy="no-referrer"
+      />
+    </div>
   );
 }

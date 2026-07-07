@@ -18,6 +18,9 @@ export interface CatalogItem {
   shortDescription: string;
   fullDescription: string;
   imageUrl: string;
+  imageFit?: 'cover' | 'contain' | 'fill';
+  imageScale?: number;
+  imageHeight?: number;
   specs: {
     label: string;
     value: string;

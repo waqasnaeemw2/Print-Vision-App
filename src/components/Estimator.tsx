@@ -2,14 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { Sliders, HelpCircle, Calendar, ShieldCheck, DollarSign, Calculator } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ProductType, EstimateResult } from '../types';
-import { calculatePrintCost } from '../data';
 
 interface EstimatorProps {
   onEstimateSelect: (estimate: { type: ProductType; quantity: number; costBreakdown: EstimateResult }) => void;
+  pricingRules?: { type: string; label: string; basePrice: number; setupFee: number; productionDays: number; minQty: number }[];
 }
 
-export default function Estimator({ onEstimateSelect }: EstimatorProps) {
-  const [productType, setProductType] = useState<ProductType>('woven-labels');
+export default function Estimator({ onEstimateSelect, pricingRules }: EstimatorProps) {
+  const defaultPricingRules = [
+    { type: 'woven-labels', label: 'Woven Labels', basePrice: 2.5, setupFee: 2500, productionDays: 10, minQty: 1000 },
+    { type: 'printed-labels', label: 'Printed Tape Labels', basePrice: 1.5, setupFee: 1200, productionDays: 6, minQty: 1000 },
+    { type: 'hang-tags', label: 'Apparel Hang Tags', basePrice: 3.5, setupFee: 1800, productionDays: 7, minQty: 1000 },
+    { type: 'barcode-stickers', label: 'Barcode POS Stickers', basePrice: 0.4, setupFee: 800, productionDays: 4, minQty: 2000 },
+    { type: 'packaging-boxes', label: 'Rigid Cardboard Boxes', basePrice: 45.0, setupFee: 5000, productionDays: 14, minQty: 500 },
+    { type: 'satin-labels', label: 'Premium Satin Labels', basePrice: 2.0, setupFee: 1000, productionDays: 5, minQty: 1000 },
+    { type: 'printed-bags', label: 'Laminated Paper Bags', basePrice: 28.0, setupFee: 3500, productionDays: 12, minQty: 1000 }
+  ];
+
+  const rulesList = pricingRules && pricingRules.length > 0 ? pricingRules : defaultPricingRules;
+
+  const [productType, setProductType] = useState<ProductType>(rulesList[0]?.type as ProductType || 'woven-labels');
   const [quantity, setQuantity] = useState(3000);
   const [widthMm, setWidthMm] = useState(55);
   const [heightMm, setHeightMm] = useState(25);
@@ -22,23 +34,55 @@ export default function Estimator({ onEstimateSelect }: EstimatorProps) {
     materialCost: 0
   });
 
-  const products: { value: ProductType; label: string; minQty: number }[] = [
-    { value: 'woven-labels', label: 'Woven Labels', minQty: 1000 },
-    { value: 'printed-labels', label: 'Printed Tape Labels', minQty: 1000 },
-    { value: 'hang-tags', label: 'Apparel Hang Tags', minQty: 1000 },
-    { value: 'barcode-stickers', label: 'Barcode POS Stickers', minQty: 2000 },
-    { value: 'packaging-boxes', label: 'Rigid Cardboard Boxes', minQty: 500 },
-    { value: 'satin-labels', label: 'Premium Satin Labels', minQty: 1000 },
-    { value: 'printed-bags', label: 'Laminated Paper Bags', minQty: 1000 }
-  ];
+  const products = rulesList.map(r => ({
+    value: r.type as ProductType,
+    label: r.label,
+    minQty: r.minQty
+  }));
 
   const [withPremiumEffects, setWithPremiumEffects] = useState(false);
 
   // Recalculate instantly whenever options change
   useEffect(() => {
-    const cost = calculatePrintCost(productType, quantity, widthMm, heightMm, withPremiumEffects);
-    setEstimate(cost);
-  }, [productType, quantity, widthMm, heightMm, withPremiumEffects]);
+    // Dynamic calculate function
+    const selectedRule = rulesList.find(r => r.type === productType) || rulesList[0];
+    if (!selectedRule) return;
+
+    let basePricePerUnit = selectedRule.basePrice;
+    let setupFee = selectedRule.setupFee;
+    let productionDays = selectedRule.productionDays;
+    let multiplier = 1.0;
+
+    // Size multipliers
+    const area = (widthMm * heightMm) / 1000;
+    if (area > 5) {
+      multiplier += (area - 5) * 0.05;
+    }
+
+    if (withPremiumEffects) {
+      multiplier += 0.35;
+      productionDays += 2;
+    }
+
+    // Volume discounts
+    let volumeDiscount = 1.0;
+    if (quantity >= 10000) volumeDiscount = 0.65;
+    else if (quantity >= 5000) volumeDiscount = 0.75;
+    else if (quantity >= 2000) volumeDiscount = 0.85;
+    else if (quantity >= 1000) volumeDiscount = 0.92;
+
+    const finalUnitCost = Number((basePricePerUnit * multiplier * volumeDiscount).toFixed(2));
+    const materialCost = Number((finalUnitCost * quantity * 0.75).toFixed(2));
+    const totalPrice = Math.ceil(finalUnitCost * quantity + setupFee);
+
+    setEstimate({
+      basePricePerUnit: finalUnitCost,
+      totalPrice,
+      setupFee,
+      productionDays,
+      materialCost
+    });
+  }, [productType, quantity, widthMm, heightMm, withPremiumEffects, rulesList]);
 
   const handleApplyEstimate = () => {
     onEstimateSelect({

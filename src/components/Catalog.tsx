@@ -14,8 +14,9 @@ export default function Catalog({ catalogItems }: CatalogProps) {
   const [activeItem, setActiveItem] = useState<CatalogItem | null>(null);
 
   const categories = [
-    { value: 'all', label: 'All Packaging' },
+    { value: 'all', label: 'All Catalog' },
     { value: 'woven-labels', label: 'Woven Labels' },
+    { value: 'satin-labels', label: 'Satin & Printed Labels' },
     { value: 'hang-tags', label: 'Apparel Hang Tags' },
     { value: 'packaging-boxes', label: 'Gift Boxes' },
     { value: 'barcode-stickers', label: 'Barcode Stickers' },
@@ -26,7 +27,11 @@ export default function Catalog({ catalogItems }: CatalogProps) {
 
   const filteredItems = selectedCategory === 'all'
     ? itemsToUse
-    : itemsToUse.filter(item => item.type === selectedCategory || (selectedCategory === 'insert-cards' && (item.type === 'insert-cards' || item.type === 'printed-bags')));
+    : itemsToUse.filter(item => 
+        item.type === selectedCategory || 
+        (selectedCategory === 'insert-cards' && (item.type === 'insert-cards' || item.type === 'printed-bags')) ||
+        (selectedCategory === 'satin-labels' && (item.type === 'satin-labels' || item.type === 'printed-labels'))
+      );
 
   return (
     <section id="catalog" className="py-16 bg-white border-t border-[#E7E8F2]">
@@ -84,7 +89,10 @@ export default function Catalog({ catalogItems }: CatalogProps) {
                     src={item.imageUrl} 
                     alt={item.title} 
                     productType={item.type}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    imageFit={item.imageFit}
+                    imageScale={item.imageScale}
+                    imageHeight={item.imageHeight}
+                    className="w-full h-full group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full font-mono text-[9px] text-[#171B54] font-bold uppercase shadow-sm border border-gray-100">
                     {item.type.replace('-', ' ')}
@@ -161,7 +169,10 @@ export default function Catalog({ catalogItems }: CatalogProps) {
                     src={activeItem.imageUrl} 
                     alt={activeItem.title} 
                     productType={activeItem.type}
-                    className="w-full h-full object-cover" 
+                    imageFit={activeItem.imageFit}
+                    imageScale={activeItem.imageScale}
+                    imageHeight={activeItem.imageHeight}
+                    className="w-full h-full" 
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
                   <button 

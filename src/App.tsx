@@ -32,6 +32,40 @@ const defaultContact = {
   whatsapp: "923027000073"
 };
 
+const defaultPricingRules = [
+  { type: 'woven-labels', label: 'Woven Labels', basePrice: 2.5, setupFee: 2500, productionDays: 10, minQty: 1000 },
+  { type: 'printed-labels', label: 'Printed Tape Labels', basePrice: 1.5, setupFee: 1200, productionDays: 6, minQty: 1000 },
+  { type: 'hang-tags', label: 'Apparel Hang Tags', basePrice: 3.5, setupFee: 1800, productionDays: 7, minQty: 1000 },
+  { type: 'barcode-stickers', label: 'Barcode POS Stickers', basePrice: 0.4, setupFee: 800, productionDays: 4, minQty: 2000 },
+  { type: 'packaging-boxes', label: 'Rigid Cardboard Boxes', basePrice: 45.0, setupFee: 5000, productionDays: 14, minQty: 500 },
+  { type: 'satin-labels', label: 'Premium Satin Labels', basePrice: 2.0, setupFee: 1000, productionDays: 5, minQty: 1000 },
+  { type: 'printed-bags', label: 'Laminated Paper Bags', basePrice: 28.0, setupFee: 3500, productionDays: 12, minQty: 1000 }
+];
+
+const defaultWhyUs = {
+  badge: "The Print Vision Calibration",
+  title: "Engineered For Elite Apparel Brands",
+  description: "We do not just manufacture standard paper tags. We build precision brand assets. Rooted in Faisalabad, Print Vision utilizes modern German machinery to run perfect identity plates for Pakistan's leading fashion exporters.",
+  advantages: [
+    {
+      title: "Pantone® & Color Spectrometer Integrity",
+      description: "Print Vision implements automated colorimeter-locked offset plate checks. We guarantee 100% color consistency between your primary luxury fabrics and brand hang tags, run after run."
+    },
+    {
+      title: "Faisalabad Direct High-Speed Hub",
+      description: "Based in the heart of Pakistan's textile capital. We synchronize print plate runs with your knitting schedules to eliminate downtime—ensuring premium Swings and Labels arrive before packaging begins."
+    },
+    {
+      title: "Premium Multi-Tactile Tooling",
+      description: "Expand your brand's touchpoints. We specialize in velvet-soft matte lamination, high-build Spot UV finishes, micro-embossed textured cardboards, and real hot-stamped gold foil trims."
+    },
+    {
+      title: "OEKO-TEX® Certified Dye Integrity",
+      description: "Our partner mills utilize only hyper-dense, skin-safe, hypoallergenic polyester yarns. Fully resistant to commercial laundry friction and harsh enzyme washes, keeping tags crisp."
+    }
+  ]
+};
+
 export default function App() {
   const [activeDesign, setActiveDesign] = useState<CustomDesign | null>(null);
   const [activeEstimate, setActiveEstimate] = useState<{ type: ProductType; quantity: number; costBreakdown: EstimateResult } | null>(null);
@@ -42,6 +76,8 @@ export default function App() {
     const savedHero = localStorage.getItem('printvision_hero_config');
     const savedCatalog = localStorage.getItem('printvision_catalog_config');
     const savedContact = localStorage.getItem('printvision_contact_config');
+    const savedPricingRules = localStorage.getItem('printvision_pricing_rules');
+    const savedWhyUs = localStorage.getItem('printvision_whyus_config');
 
     let finalCatalog = CATALOG_ITEMS;
     if (savedCatalog) {
@@ -61,7 +97,9 @@ export default function App() {
     return {
       hero: savedHero ? JSON.parse(savedHero) : defaultHero,
       catalogItems: finalCatalog,
-      contact: savedContact ? JSON.parse(savedContact) : defaultContact
+      contact: savedContact ? JSON.parse(savedContact) : defaultContact,
+      pricingRules: savedPricingRules ? JSON.parse(savedPricingRules) : defaultPricingRules,
+      whyUsConfig: savedWhyUs ? JSON.parse(savedWhyUs) : defaultWhyUs
     };
   });
 
@@ -70,16 +108,22 @@ export default function App() {
     localStorage.setItem('printvision_hero_config', JSON.stringify(newConfig.hero));
     localStorage.setItem('printvision_catalog_config', JSON.stringify(newConfig.catalogItems));
     localStorage.setItem('printvision_contact_config', JSON.stringify(newConfig.contact));
+    localStorage.setItem('printvision_pricing_rules', JSON.stringify(newConfig.pricingRules));
+    localStorage.setItem('printvision_whyus_config', JSON.stringify(newConfig.whyUsConfig));
   };
 
   const handleResetConfig = () => {
     localStorage.removeItem('printvision_hero_config');
     localStorage.removeItem('printvision_catalog_config');
     localStorage.removeItem('printvision_contact_config');
+    localStorage.removeItem('printvision_pricing_rules');
+    localStorage.removeItem('printvision_whyus_config');
     setSiteConfig({
       hero: defaultHero,
       catalogItems: CATALOG_ITEMS,
-      contact: defaultContact
+      contact: defaultContact,
+      pricingRules: defaultPricingRules,
+      whyUsConfig: defaultWhyUs
     });
   };
 
@@ -144,10 +188,10 @@ export default function App() {
         <Catalog catalogItems={siteConfig.catalogItems} />
 
         {/* Volume & Cost estimator sliderboard */}
-        <Estimator onEstimateSelect={handleEstimateFromCalculator} />
+        <Estimator onEstimateSelect={handleEstimateFromCalculator} pricingRules={siteConfig.pricingRules} />
 
         {/* Strategic quality advantages cards */}
-        <WhyUs />
+        <WhyUs whyUsConfig={siteConfig.whyUsConfig} />
 
         {/* Procurement & Specs Contact Form */}
         <ContactForm 

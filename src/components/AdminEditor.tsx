@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { X, Settings, Sparkles, RefreshCw, Save, Clipboard, FileCode, Check, Image, Layout, Tag, ShieldAlert, Phone, Lock, Unlock, LogOut, AlertCircle, HelpCircle } from 'lucide-react';
+import { 
+  X, Settings, Sparkles, RefreshCw, Save, Clipboard, 
+  FileCode, Check, Image, Layout, Tag, ShieldAlert, 
+  Phone, Lock, Unlock, LogOut, AlertCircle, HelpCircle,
+  Upload, Plus, Trash2, Sliders, Layers, Award
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { CatalogItem } from '../types';
 
@@ -20,13 +25,20 @@ interface AdminEditorProps {
       email: string;
       whatsapp: string;
     };
+    pricingRules: { type: string; label: string; basePrice: number; setupFee: number; productionDays: number; minQty: number }[];
+    whyUsConfig: {
+      badge: string;
+      title: string;
+      description: string;
+      advantages: { title: string; description: string }[];
+    };
   };
   onUpdate: (newConfig: any) => void;
   onReset: () => void;
 }
 
 export default function AdminEditor({ isOpen, onClose, siteConfig, onUpdate, onReset }: AdminEditorProps) {
-  const [activeTab, setActiveTab] = useState<'hero' | 'catalog' | 'contact'>('hero');
+  const [activeTab, setActiveTab] = useState<'hero' | 'catalog' | 'estimator' | 'whyus' | 'contact'>('hero');
   const [selectedCatalogId, setSelectedCatalogId] = useState<string>(siteConfig.catalogItems[0]?.id || '');
   const [copied, setCopied] = useState(false);
   const [showCodeExport, setShowCodeExport] = useState(false);
@@ -43,16 +55,20 @@ export default function AdminEditor({ isOpen, onClose, siteConfig, onUpdate, onR
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
 
-  // Local editable copy
+  // Local editable copies
   const [localHero, setLocalHero] = useState({ ...siteConfig.hero });
   const [localCatalogItems, setLocalCatalogItems] = useState([...siteConfig.catalogItems]);
   const [localContact, setLocalContact] = useState({ ...siteConfig.contact });
+  const [localPricingRules, setLocalPricingRules] = useState([...siteConfig.pricingRules]);
+  const [localWhyUs, setLocalWhyUs] = useState({ ...siteConfig.whyUsConfig });
 
   // Sync state if siteConfig changes
   useEffect(() => {
     setLocalHero({ ...siteConfig.hero });
     setLocalCatalogItems([...siteConfig.catalogItems]);
     setLocalContact({ ...siteConfig.contact });
+    setLocalPricingRules([...siteConfig.pricingRules]);
+    setLocalWhyUs({ ...siteConfig.whyUsConfig });
   }, [siteConfig]);
 
   const handleHeroChange = (field: string, value: string) => {
@@ -71,6 +87,100 @@ export default function AdminEditor({ isOpen, onClose, siteConfig, onUpdate, onR
     );
   };
 
+  // Local image file uploader
+  const handleCatalogImageUpload = (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        handleCatalogChange(id, 'imageUrl', reader.result);
+        showToast('Local image uploaded and processed successfully!');
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleAddCatalogItem = () => {
+    const newId = `custom-product-${Date.now()}`;
+    const newItem: CatalogItem = {
+      id: newId,
+      type: 'woven-labels',
+      title: 'New Product Line',
+      shortDescription: 'Custom products manufactured locally in Faisalabad.',
+      fullDescription: 'High fidelity print details crafted according to export client demands.',
+      imageUrl: 'https://images.unsplash.com/photo-1603252109303-2751441dd157?auto=format&fit=crop&q=80&w=600',
+      specs: [
+        { label: 'Sourcing', value: 'Print Vision Faisalabad Hub' },
+        { label: 'Minimum Run', value: '1,000 units' }
+      ],
+      features: ['Precision Alignment', 'Hypoallergenic Inks'],
+      imageFit: 'cover',
+      imageScale: 1.0,
+      imageHeight: 260
+    };
+
+    setLocalCatalogItems(prev => [...prev, newItem]);
+    setSelectedCatalogId(newId);
+    showToast('New Catalog Product created! Configure its layout values below.');
+  };
+
+  const handleDeleteCatalogItem = (id: string) => {
+    if (localCatalogItems.length <= 1) {
+      showToast('Error: You must keep at least one catalog item.');
+      return;
+    }
+    const filtered = localCatalogItems.filter(item => item.id !== id);
+    setLocalCatalogItems(filtered);
+    setSelectedCatalogId(filtered[0]?.id || '');
+    showToast('Catalog product deleted.');
+  };
+
+  // Estimator rules state management
+  const handlePricingRuleChange = (index: number, field: string, value: any) => {
+    setLocalPricingRules(prev => {
+      const next = [...prev];
+      next[index] = { ...next[index], [field]: value };
+      return next;
+    });
+  };
+
+  const handleAddPricingRule = () => {
+    const newRule = {
+      type: `custom-${Date.now()}`,
+      label: 'New Estimator Category',
+      basePrice: 10.0,
+      setupFee: 2000,
+      productionDays: 8,
+      minQty: 1000
+    };
+    setLocalPricingRules(prev => [...prev, newRule]);
+    showToast('Added new pricing rate template. Set values below!');
+  };
+
+  const handleDeletePricingRule = (index: number) => {
+    if (localPricingRules.length <= 1) {
+      showToast('Error: Must keep at least one estimator category.');
+      return;
+    }
+    setLocalPricingRules(prev => prev.filter((_, i) => i !== index));
+    showToast('Estimator category removed.');
+  };
+
+  // WhyUs (Engineered for Elite) configuration handlers
+  const handleWhyUsChange = (field: string, value: string) => {
+    setLocalWhyUs(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleWhyUsAdvantageChange = (index: number, field: string, value: string) => {
+    setLocalWhyUs(prev => {
+      const nextAdvs = [...prev.advantages];
+      nextAdvs[index] = { ...nextAdvs[index], [field]: value };
+      return { ...prev, advantages: nextAdvs };
+    });
+  };
+
   const handleContactChange = (field: string, value: string) => {
     setLocalContact(prev => ({ ...prev, [field]: value }));
   };
@@ -80,7 +190,6 @@ export default function AdminEditor({ isOpen, onClose, siteConfig, onUpdate, onR
     const normalizedUser = username.trim().toLowerCase();
     const userPassword = password.trim();
 
-    // Support flexible administrative passwords including custom account for Waqas
     const isAdminUser = normalizedUser === 'admin' || normalizedUser === 'waqas' || normalizedUser === 'waqas.naeem.w2@gmail.com';
     const isValidPass = userPassword === 'printvision2026' || userPassword === 'admin' || userPassword === '3027000073' || userPassword === 'waqas' || userPassword === 'waqas123';
 
@@ -113,7 +222,9 @@ export default function AdminEditor({ isOpen, onClose, siteConfig, onUpdate, onR
     onUpdate({
       hero: localHero,
       catalogItems: localCatalogItems,
-      contact: localContact
+      contact: localContact,
+      pricingRules: localPricingRules,
+      whyUsConfig: localWhyUs
     });
     showToast('Changes saved and applied instantly to the page!');
   };
@@ -123,6 +234,8 @@ export default function AdminEditor({ isOpen, onClose, siteConfig, onUpdate, onR
     setLocalHero({ ...siteConfig.hero });
     setLocalCatalogItems([...siteConfig.catalogItems]);
     setLocalContact({ ...siteConfig.contact });
+    setLocalPricingRules([...siteConfig.pricingRules]);
+    setLocalWhyUs({ ...siteConfig.whyUsConfig });
     setShowResetConfirm(false);
     showToast('Site configuration reset back to original press defaults.');
   };
@@ -130,6 +243,7 @@ export default function AdminEditor({ isOpen, onClose, siteConfig, onUpdate, onR
   // Generate complete TypeScript source code for /src/data.ts based on user edits
   const generateDataTsCode = () => {
     const formattedCatalogItems = JSON.stringify(localCatalogItems, null, 2);
+    const formattedPricingRules = JSON.stringify(localPricingRules, null, 2);
     
     return `import { CatalogItem } from './types';
 
@@ -137,9 +251,13 @@ export const CATALOG_ITEMS: CatalogItem[] = ${formattedCatalogItems};
 
 export const FINISH_OPTIONS = {
   'woven-labels': ['Damask Standard', 'Satin Backing', 'Ultrasonic Sealed Edge', 'Metallic Thread Accent'],
+  'satin-labels': ['Polyester Satin Loop', 'Soft Edge Satin Flat', 'Center-Fold Satin Ribbon'],
+  'printed-labels': ['Nylon Taffeta Print', 'Cotton Care Weave', 'Poly-Cotton Comfort Tape'],
   'hang-tags': ['Matte Finished Board', 'Uncoated Recycled Kraft', 'Luxury Velvet-Coated', 'Spot-UV Textured Board'],
   'barcode-stickers': ['Permanent Semi-Gloss Paper', 'Thermal Polypropylene (Waterproof)', 'Easy-Peel Removable Adhesive'],
-  'packaging-boxes': ['Rigid Cardboard Kraft', 'Folding Paper Duplex', 'Rigid Board velvet Wrap', 'Slide-Out Drawer Style']
+  'packaging-boxes': ['Rigid Cardboard Kraft', 'Folding Paper Duplex', 'Rigid Board velvet Wrap', 'Slide-Out Drawer Style'],
+  'insert-cards': ['Heavy Matte Coated', 'Spot UV Textured Card', 'Eco Recycled Paperboard'],
+  'printed-bags': ['Art Paper Matt Lam', 'Craft Paper Natural Twist', 'Premium Gloss Laminated']
 };
 
 export const FONT_PAIRINGS = {
@@ -167,46 +285,13 @@ export function calculatePrintCost(
   height: number,
   withPremiumEffects: boolean
 ): { basePricePerUnit: number; totalPrice: number; setupFee: number; productionDays: number; materialCost: number } {
-  let basePricePerUnit = 0.8; 
-  let setupFee = 1500; 
-  let productionDays = 7;
+  const rules = ${formattedPricingRules};
+  const selectedRule = rules.find(r => r.type === type) || rules[0];
+  
+  let basePricePerUnit = selectedRule ? selectedRule.basePrice : 1.0;
+  let setupFee = selectedRule ? selectedRule.setupFee : 1500;
+  let productionDays = selectedRule ? selectedRule.productionDays : 7;
   let multiplier = 1.0;
-
-  switch (type) {
-    case 'woven-labels':
-      basePricePerUnit = 2.5;
-      setupFee = 2500;
-      productionDays = 10;
-      break;
-    case 'hang-tags':
-      basePricePerUnit = 3.5;
-      setupFee = 1800;
-      productionDays = 7;
-      break;
-    case 'barcode-stickers':
-      basePricePerUnit = 0.4;
-      setupFee = 800;
-      productionDays = 4;
-      break;
-    case 'packaging-boxes':
-      basePricePerUnit = 45.0;
-      setupFee = 5000;
-      productionDays = 14;
-      break;
-    case 'satin-labels':
-      basePricePerUnit = 2.0;
-      setupFee = 1000;
-      productionDays = 5;
-      break;
-    case 'printed-bags':
-      basePricePerUnit = 28.0;
-      setupFee = 3500;
-      productionDays = 12;
-      break;
-    default:
-      basePricePerUnit = 5.0;
-      setupFee = 1500;
-  }
 
   // Size multipliers
   const area = (width * height) / 1000; 
@@ -249,7 +334,7 @@ export function calculatePrintCost(
 
   const activeCatalogItem = localCatalogItems.find(item => item.id === selectedCatalogId);
 
-  // High-fidelity stock image presets for easily swapping visuals
+  // Stock image presets
   const imagePresets = [
     { label: 'Red Swing Tag & Lace', url: 'https://images.unsplash.com/photo-1698932646779-916299619ad2?auto=format&fit=crop&q=80&w=600' },
     { label: 'Branded Linen Label', url: 'https://images.unsplash.com/photo-1603252109303-2751441dd157?auto=format&fit=crop&q=80&w=600' },
@@ -312,7 +397,7 @@ export function calculatePrintCost(
               </div>
             </div>
 
-            {/* If NOT LOGGED IN, render premium Secure Admin Login Form */}
+            {/* If NOT LOGGED IN, render login screen */}
             {!isLoggedIn ? (
               <div className="flex-1 bg-gradient-to-b from-slate-50 to-white p-8 flex flex-col justify-center items-stretch text-left">
                 <div className="max-w-sm mx-auto w-full space-y-6">
@@ -322,7 +407,7 @@ export function calculatePrintCost(
                     </div>
                     <h4 className="font-display font-black text-xl text-[#171B54]">Admin Secure Access</h4>
                     <p className="font-sans text-xs text-gray-500">
-                      Login to dynamically edit landing images, catalog cards, and Faisalabad press contact phone numbers.
+                      Login to dynamically edit landing images, catalog cards, estimator rates, and Faisalabad press hotlines.
                     </p>
                   </div>
 
@@ -389,23 +474,23 @@ export function calculatePrintCost(
                 </div>
               </div>
             ) : (
-              // Else if LOGGED IN, render full interactive Editor controls
+              // Else if LOGGED IN, render full interactive editor controls
               <>
-                {/* Navigation Tabs */}
-                <div className="flex border-b border-gray-100 bg-[#F5F6FB] px-4 shrink-0">
+                {/* Scrollable Navigation Tabs */}
+                <div className="flex overflow-x-auto border-b border-gray-100 bg-[#F5F6FB] px-2 shrink-0 scrollbar-thin">
                   <button
                     onClick={() => { setActiveTab('hero'); setShowCodeExport(false); }}
-                    className={`flex-1 py-3.5 text-center font-sans font-bold text-xs border-b-2 transition-all ${
+                    className={`py-3 px-3.5 text-center font-sans font-bold text-xs border-b-2 transition-all whitespace-nowrap shrink-0 ${
                       activeTab === 'hero' && !showCodeExport
                         ? 'border-[#171B54] text-[#171B54]'
                         : 'border-transparent text-gray-500 hover:text-gray-900'
                     }`}
                   >
-                    1. Hero Section
+                    1. Hero
                   </button>
                   <button
                     onClick={() => { setActiveTab('catalog'); setShowCodeExport(false); }}
-                    className={`flex-1 py-3.5 text-center font-sans font-bold text-xs border-b-2 transition-all ${
+                    className={`py-3 px-3.5 text-center font-sans font-bold text-xs border-b-2 transition-all whitespace-nowrap shrink-0 ${
                       activeTab === 'catalog' && !showCodeExport
                         ? 'border-[#171B54] text-[#171B54]'
                         : 'border-transparent text-gray-500 hover:text-gray-900'
@@ -414,14 +499,34 @@ export function calculatePrintCost(
                     2. Catalog Cards
                   </button>
                   <button
+                    onClick={() => { setActiveTab('estimator'); setShowCodeExport(false); }}
+                    className={`py-3 px-3.5 text-center font-sans font-bold text-xs border-b-2 transition-all whitespace-nowrap shrink-0 ${
+                      activeTab === 'estimator' && !showCodeExport
+                        ? 'border-[#171B54] text-[#171B54]'
+                        : 'border-transparent text-gray-500 hover:text-gray-900'
+                    }`}
+                  >
+                    3. Estimator Rates
+                  </button>
+                  <button
+                    onClick={() => { setActiveTab('whyus'); setShowCodeExport(false); }}
+                    className={`py-3 px-3.5 text-center font-sans font-bold text-xs border-b-2 transition-all whitespace-nowrap shrink-0 ${
+                      activeTab === 'whyus' && !showCodeExport
+                        ? 'border-[#171B54] text-[#171B54]'
+                        : 'border-transparent text-gray-500 hover:text-gray-900'
+                    }`}
+                  >
+                    4. WhyUs Elite
+                  </button>
+                  <button
                     onClick={() => { setActiveTab('contact'); setShowCodeExport(false); }}
-                    className={`flex-1 py-3.5 text-center font-sans font-bold text-xs border-b-2 transition-all ${
+                    className={`py-3 px-3.5 text-center font-sans font-bold text-xs border-b-2 transition-all whitespace-nowrap shrink-0 ${
                       activeTab === 'contact' && !showCodeExport
                         ? 'border-[#171B54] text-[#171B54]'
                         : 'border-transparent text-gray-500 hover:text-gray-900'
                     }`}
                   >
-                    3. Contact Specs
+                    5. Contact
                   </button>
                 </div>
 
@@ -437,13 +542,13 @@ export function calculatePrintCost(
                         exit={{ opacity: 0, y: -20, scale: 0.95 }}
                         className="absolute top-4 inset-x-6 z-20 bg-[#171B54] text-white p-3.5 rounded-xl shadow-xl border border-[#F5A623] text-xs font-sans flex items-center gap-2"
                       >
-                        <Check size={14} className="text-emerald-400 font-bold" />
+                        <Check size={14} className="text-emerald-400 font-bold font-mono" />
                         <span>{toastMessage}</span>
                       </motion.div>
                     )}
                   </AnimatePresence>
 
-                  {/* Dynamic Custom Reset Overlay Confirmation Modal */}
+                  {/* Master Reset Overlay */}
                   <AnimatePresence>
                     {showResetConfirm && (
                       <motion.div
@@ -463,13 +568,13 @@ export function calculatePrintCost(
                           <div className="flex gap-2">
                             <button
                               onClick={executeReset}
-                              className="flex-1 bg-red-600 hover:bg-red-700 text-white font-sans font-bold py-2 rounded-lg text-xs"
+                              className="flex-1 bg-red-600 hover:bg-red-700 text-white font-sans font-bold py-2 rounded-lg text-xs cursor-pointer"
                             >
                               Yes, Reset Defaults
                             </button>
                             <button
                               onClick={() => setShowResetConfirm(false)}
-                              className="flex-1 bg-slate-800 hover:bg-slate-700 text-gray-300 font-sans font-bold py-2 rounded-lg text-xs"
+                              className="flex-1 bg-slate-800 hover:bg-slate-700 text-gray-300 font-sans font-bold py-2 rounded-lg text-xs cursor-pointer"
                             >
                               Cancel
                             </button>
@@ -487,7 +592,7 @@ export function calculatePrintCost(
                         <div>
                           <h4 className="font-sans font-bold text-xs text-[#171B54]">Save edits permanently!</h4>
                           <p className="font-sans text-[11px] text-gray-600 mt-1 leading-relaxed">
-                            To persist your customized visuals and layouts across all computers forever, copy the code below and replace your <code className="font-mono bg-amber-100 px-1 py-0.5 rounded text-amber-800">src/data.ts</code> file content.
+                            To persist your customized visuals, catalog layouts, uploaded image binaries, and estimator rate sheets forever, copy the code below and replace your <code className="font-mono bg-amber-100 px-1 py-0.5 rounded text-amber-800">src/data.ts</code> file content.
                           </p>
                         </div>
                       </div>
@@ -503,7 +608,7 @@ export function calculatePrintCost(
                         <textarea
                           readOnly
                           value={generateDataTsCode()}
-                          className="w-full h-80 font-mono text-[10px] p-4 bg-slate-900 text-slate-100 border border-slate-800 rounded-xl focus:outline-none block select-all whitespace-pre leading-normal"
+                          className="w-full h-96 font-mono text-[10px] p-4 bg-slate-900 text-slate-100 border border-slate-800 rounded-xl focus:outline-none block select-all whitespace-pre leading-normal"
                         />
                       </div>
                     </div>
@@ -563,7 +668,6 @@ export function calculatePrintCost(
                                   key={preset.label}
                                   type="button"
                                   onClick={() => {
-                                    // Replace the first empty or overwrite index 0
                                     handleHeroImageChange(0, preset.url);
                                     showToast(`Hero Image 1 swapped to standard: ${preset.label}`);
                                   }}
@@ -597,38 +701,74 @@ export function calculatePrintCost(
                       {/* TAB 2: CATALOG DYNAMIC CARD SPECIFICATIONS */}
                       {activeTab === 'catalog' && (
                         <div className="space-y-4">
-                          <div className="flex items-center gap-2 text-gray-500 font-sans text-xs border-b border-gray-100 pb-2">
-                            <Tag size={14} className="text-[#171B54]" />
-                            <span>Edit Individual Catalog Product Descriptions &amp; Images</span>
+                          <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                            <div className="flex items-center gap-2 text-gray-500 font-sans text-xs">
+                              <Tag size={14} className="text-[#171B54]" />
+                              <span>Dynamic Catalog &amp; Image Framing Engine</span>
+                            </div>
+                            <button
+                              onClick={handleAddCatalogItem}
+                              className="bg-[#171B54] hover:bg-[#E31E2B] text-white text-[10px] font-sans font-bold px-2.5 py-1 rounded-md flex items-center gap-1 cursor-pointer transition-colors"
+                            >
+                              <Plus size={12} /> Add Product
+                            </button>
                           </div>
 
                           <div>
-                            <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">Select Catalog Card to Edit</label>
-                            <select
-                              value={selectedCatalogId}
-                              onChange={(e) => setSelectedCatalogId(e.target.value)}
-                              className="w-full font-sans text-xs border border-gray-200 rounded-lg p-2.5 focus:border-[#171B54] focus:outline-none bg-white"
-                            >
-                              {localCatalogItems.map(item => (
-                                <option key={item.id} value={item.id}>{item.title} ({item.type.replace('-', ' ')})</option>
-                              ))}
-                            </select>
+                            <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">Select Card to Edit</label>
+                            <div className="flex gap-1.5">
+                              <select
+                                value={selectedCatalogId}
+                                onChange={(e) => setSelectedCatalogId(e.target.value)}
+                                className="flex-1 font-sans text-xs border border-gray-200 rounded-lg p-2.5 focus:border-[#171B54] focus:outline-none bg-white"
+                              >
+                                {localCatalogItems.map(item => (
+                                  <option key={item.id} value={item.id}>{item.title} ({item.type.replace('-', ' ')})</option>
+                                ))}
+                              </select>
+                              <button
+                                onClick={() => handleDeleteCatalogItem(selectedCatalogId)}
+                                className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-3 rounded-lg cursor-pointer transition-colors"
+                                title="Delete this card"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </div>
                           </div>
 
                           {activeCatalogItem && (
                             <div className="bg-slate-50 border border-gray-100 rounded-2xl p-4 sm:p-5 space-y-4">
-                              <div>
-                                <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Product Line Title</label>
-                                <input
-                                  type="text"
-                                  value={activeCatalogItem.title}
-                                  onChange={(e) => handleCatalogChange(activeCatalogItem.id, 'title', e.target.value)}
-                                  className="w-full bg-white font-sans text-xs border border-gray-200 rounded-lg p-2.5 focus:border-[#171B54] focus:outline-none font-bold text-[#171B54]"
-                                />
+                              <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                  <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Product Title</label>
+                                  <input
+                                    type="text"
+                                    value={activeCatalogItem.title}
+                                    onChange={(e) => handleCatalogChange(activeCatalogItem.id, 'title', e.target.value)}
+                                    className="w-full bg-white font-sans text-xs border border-gray-200 rounded-lg p-2 focus:border-[#171B54] focus:outline-none font-bold text-[#171B54]"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Category Type Map</label>
+                                  <select
+                                    value={activeCatalogItem.type}
+                                    onChange={(e) => handleCatalogChange(activeCatalogItem.id, 'type', e.target.value)}
+                                    className="w-full bg-white font-sans text-xs border border-gray-200 rounded-lg p-2 focus:border-[#171B54] focus:outline-none"
+                                  >
+                                    <option value="woven-labels">Woven Labels</option>
+                                    <option value="satin-labels">Satin Labels</option>
+                                    <option value="printed-labels">Printed Care Labels</option>
+                                    <option value="hang-tags">Apparel Hang Tags</option>
+                                    <option value="barcode-stickers">Barcode Stickers</option>
+                                    <option value="packaging-boxes">Packaging Boxes</option>
+                                    <option value="insert-cards">In-Box Cards</option>
+                                    <option value="printed-bags">Printed Paper Bags</option>
+                                  </select>
+                                </div>
                               </div>
 
                               <div>
-                                <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Card Brief Short Description</label>
+                                <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Short Description Card Pitch</label>
                                 <input
                                   type="text"
                                   value={activeCatalogItem.shortDescription}
@@ -637,45 +777,91 @@ export function calculatePrintCost(
                                 />
                               </div>
 
-                              <div>
-                                <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Catalog Item Card Image URL</label>
-                                <input
-                                  type="text"
-                                  value={activeCatalogItem.imageUrl}
-                                  onChange={(e) => handleCatalogChange(activeCatalogItem.id, 'imageUrl', e.target.value)}
-                                  className="w-full bg-white font-mono text-[10px] border border-gray-200 rounded-lg p-2.5 focus:border-[#171B54] focus:outline-none"
-                                />
-                                <div className="mt-2 flex items-center gap-2">
-                                  <img src={activeCatalogItem.imageUrl} alt="" className="w-14 h-10 rounded object-cover border border-gray-100 shrink-0 bg-gray-100" />
-                                  <span className="text-[9px] text-gray-400 font-mono">Current thumbnail preview</span>
+                              {/* PICTURE MANAGEMENT SECTION */}
+                              <div className="border border-gray-200 rounded-xl p-3 bg-white space-y-3">
+                                <span className="block text-[10px] font-bold text-[#171B54] uppercase">Product Picture Management</span>
+                                
+                                <div className="flex items-center gap-3">
+                                  <img 
+                                    src={activeCatalogItem.imageUrl} 
+                                    alt="" 
+                                    style={{ 
+                                      objectFit: activeCatalogItem.imageFit || 'cover',
+                                      transform: `scale(${activeCatalogItem.imageScale || 1.0})`
+                                    }}
+                                    className="w-20 h-16 rounded object-cover border border-gray-200 shrink-0 bg-gray-100 overflow-hidden" 
+                                  />
+                                  <div className="flex-1 space-y-2">
+                                    <label className="block bg-slate-100 hover:bg-slate-200 text-[#171B54] text-center rounded-lg py-2 text-[10px] font-sans font-bold border border-dashed border-[#171B54]/35 cursor-pointer transition-colors relative">
+                                      <Upload size={12} className="inline mr-1" /> Add local picture file
+                                      <input 
+                                        type="file" 
+                                        accept="image/*" 
+                                        onChange={(e) => handleCatalogImageUpload(activeCatalogItem.id, e)}
+                                        className="hidden" 
+                                      />
+                                    </label>
+                                    
+                                    <input
+                                      type="text"
+                                      value={activeCatalogItem.imageUrl}
+                                      onChange={(e) => handleCatalogChange(activeCatalogItem.id, 'imageUrl', e.target.value)}
+                                      placeholder="Or paste internet address URL..."
+                                      className="w-full font-mono text-[9px] border border-gray-200 rounded px-1.5 py-1 focus:border-[#171B54] focus:outline-none"
+                                    />
+                                  </div>
+                                </div>
+
+                                {/* FIT AND CUSTOM SIZE TUNER */}
+                                <div className="border-t border-gray-100 pt-2.5 space-y-2.5 text-xs">
+                                  <span className="block text-[9px] font-bold text-gray-400 uppercase">Image Fit &amp; Custom Sizing Controls:</span>
+                                  
+                                  <div className="grid grid-cols-3 gap-2">
+                                    <div>
+                                      <label className="block text-[9px] text-gray-500 uppercase mb-0.5">Image Fit</label>
+                                      <select
+                                        value={activeCatalogItem.imageFit || 'cover'}
+                                        onChange={(e) => handleCatalogChange(activeCatalogItem.id, 'imageFit', e.target.value)}
+                                        className="w-full border border-gray-200 rounded px-1.5 py-1 text-[10px] bg-slate-50 focus:outline-none"
+                                      >
+                                        <option value="cover">cover (standard)</option>
+                                        <option value="contain">contain (letterbox)</option>
+                                        <option value="fill">fill (stretch)</option>
+                                      </select>
+                                    </div>
+
+                                    <div>
+                                      <label className="block text-[9px] text-gray-500 uppercase mb-0.5">Scale ({activeCatalogItem.imageScale || 1.0}x)</label>
+                                      <input
+                                        type="range"
+                                        min={0.5}
+                                        max={2.5}
+                                        step={0.1}
+                                        value={activeCatalogItem.imageScale || 1.0}
+                                        onChange={(e) => handleCatalogChange(activeCatalogItem.id, 'imageScale', parseFloat(e.target.value))}
+                                        className="w-full accent-[#171B54] cursor-pointer"
+                                      />
+                                    </div>
+
+                                    <div>
+                                      <label className="block text-[9px] text-gray-500 uppercase mb-0.5">Height ({activeCatalogItem.imageHeight || 260}px)</label>
+                                      <input
+                                        type="number"
+                                        min={100}
+                                        max={500}
+                                        value={activeCatalogItem.imageHeight || 260}
+                                        onChange={(e) => handleCatalogChange(activeCatalogItem.id, 'imageHeight', parseInt(e.target.value) || 260)}
+                                        className="w-full border border-gray-200 rounded px-1.5 py-0.5 text-[10px] font-mono text-center"
+                                      />
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
 
-                              {/* Stock picker for catalog item */}
                               <div>
-                                <span className="block text-[9px] font-bold text-gray-400 uppercase mb-1.5">Quick Stock Image Replacer:</span>
-                                <div className="grid grid-cols-3 gap-1.5">
-                                  {imagePresets.map((preset) => (
-                                    <button
-                                      key={preset.label}
-                                      type="button"
-                                      onClick={() => {
-                                        handleCatalogChange(activeCatalogItem.id, 'imageUrl', preset.url);
-                                        showToast(`Swapped image of "${activeCatalogItem.title}"!`);
-                                      }}
-                                      className="border border-gray-200 hover:border-[#171B54] rounded bg-white p-1 text-center cursor-pointer transition-all"
-                                      title={preset.label}
-                                    >
-                                      <img src={preset.url} alt="" className="w-full h-8 rounded object-cover" />
-                                    </button>
-                                  ))}
-                                </div>
-                              </div>
-
-                              <div>
-                                <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Detailed Technical Specifications Paragraph</label>
+                                <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Detailed Specifications Paragraph</label>
                                 <textarea
-                                  rows={4}
+                                  rows={3}
                                   value={activeCatalogItem.fullDescription}
                                   onChange={(e) => handleCatalogChange(activeCatalogItem.id, 'fullDescription', e.target.value)}
                                   className="w-full bg-white font-sans text-xs border border-gray-200 rounded-lg p-2.5 focus:border-[#171B54] focus:outline-none text-gray-600 leading-normal"
@@ -686,7 +872,175 @@ export function calculatePrintCost(
                         </div>
                       )}
 
-                      {/* TAB 3: CONTACT INFRASTRUCTURE BRAND SPECIFICATIONS */}
+                      {/* TAB 3: ESTIMATOR RATES TEMPLATE */}
+                      {activeTab === 'estimator' && (
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                            <div className="flex items-center gap-2 text-gray-500 font-sans text-xs">
+                              <Sliders size={14} className="text-[#171B54]" />
+                              <span>Dynamic Production Cost Estimator Rules</span>
+                            </div>
+                            <button
+                              onClick={handleAddPricingRule}
+                              className="bg-[#171B54] hover:bg-[#E31E2B] text-white text-[10px] font-sans font-bold px-2.5 py-1 rounded-md flex items-center gap-1 cursor-pointer transition-colors"
+                            >
+                              <Plus size={12} /> Add Category
+                            </button>
+                          </div>
+
+                          <div className="space-y-3">
+                            {localPricingRules.map((rule, idx) => (
+                              <div key={rule.type} className="border border-gray-200 rounded-xl p-4 bg-slate-50 space-y-3">
+                                <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+                                  <span className="font-mono text-[9px] text-gray-400 font-bold uppercase">CATEGORY RATE TEMPLATE #{idx+1}</span>
+                                  <button
+                                    onClick={() => handleDeletePricingRule(idx)}
+                                    className="text-red-500 hover:text-red-700 font-sans text-[10px] font-bold flex items-center gap-1 cursor-pointer"
+                                  >
+                                    <Trash2 size={11} /> Remove
+                                  </button>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3">
+                                  <div>
+                                    <label className="block text-[9px] font-bold text-gray-500 uppercase">Product Type Code</label>
+                                    <input
+                                      type="text"
+                                      value={rule.type}
+                                      onChange={(e) => handlePricingRuleChange(idx, 'type', e.target.value)}
+                                      className="w-full bg-white font-mono text-[10px] border border-gray-200 rounded px-2 py-1.5 focus:outline-none"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <label className="block text-[9px] font-bold text-gray-500 uppercase">Label Title</label>
+                                    <input
+                                      type="text"
+                                      value={rule.label}
+                                      onChange={(e) => handlePricingRuleChange(idx, 'label', e.target.value)}
+                                      className="w-full bg-white font-sans text-xs border border-gray-200 rounded px-2 py-1.5 focus:outline-none font-bold"
+                                    />
+                                  </div>
+                                </div>
+
+                                <div className="grid grid-cols-4 gap-2 text-[10px]">
+                                  <div>
+                                    <label className="block text-[8px] text-gray-400 uppercase">Base Price</label>
+                                    <input
+                                      type="number"
+                                      step={0.1}
+                                      value={rule.basePrice}
+                                      onChange={(e) => handlePricingRuleChange(idx, 'basePrice', parseFloat(e.target.value) || 0)}
+                                      className="w-full bg-white text-center font-mono border border-gray-200 rounded py-1 focus:outline-none font-bold"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <label className="block text-[8px] text-gray-400 uppercase">Setup Fee</label>
+                                    <input
+                                      type="number"
+                                      step={100}
+                                      value={rule.setupFee}
+                                      onChange={(e) => handlePricingRuleChange(idx, 'setupFee', parseInt(e.target.value) || 0)}
+                                      className="w-full bg-white text-center font-mono border border-gray-200 rounded py-1 focus:outline-none"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <label className="block text-[8px] text-gray-400 uppercase">Days Duration</label>
+                                    <input
+                                      type="number"
+                                      value={rule.productionDays}
+                                      onChange={(e) => handlePricingRuleChange(idx, 'productionDays', parseInt(e.target.value) || 0)}
+                                      className="w-full bg-white text-center font-mono border border-gray-200 rounded py-1 focus:outline-none"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <label className="block text-[8px] text-gray-400 uppercase">Min Quantity</label>
+                                    <input
+                                      type="number"
+                                      step={500}
+                                      value={rule.minQty}
+                                      onChange={(e) => handlePricingRuleChange(idx, 'minQty', parseInt(e.target.value) || 0)}
+                                      className="w-full bg-white text-center font-mono border border-gray-200 rounded py-1 focus:outline-none"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* TAB 4: WHY US (ENGINEERED FOR ELITE) PANEL */}
+                      {activeTab === 'whyus' && (
+                        <div className="space-y-4">
+                          <div className="flex items-center gap-2 text-gray-500 font-sans text-xs border-b border-gray-100 pb-2">
+                            <Award size={14} className="text-[#171B54]" />
+                            <span>Edit Engineered for Elite Premium Technical Details</span>
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">Section Badge Pill</label>
+                            <input
+                              type="text"
+                              value={localWhyUs.badge}
+                              onChange={(e) => handleWhyUsChange('badge', e.target.value)}
+                              className="w-full font-sans text-xs border border-gray-200 rounded-lg p-2.5 focus:border-[#171B54] focus:outline-none"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">Section Large Title Headline</label>
+                            <input
+                              type="text"
+                              value={localWhyUs.title}
+                              onChange={(e) => handleWhyUsChange('title', e.target.value)}
+                              className="w-full font-sans text-xs border border-gray-200 rounded-lg p-2.5 focus:border-[#171B54] focus:outline-none font-bold text-[#171B54]"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">Section Narrative Text</label>
+                            <textarea
+                              rows={3}
+                              value={localWhyUs.description}
+                              onChange={(e) => handleWhyUsChange('description', e.target.value)}
+                              className="w-full font-sans text-xs border border-gray-200 rounded-lg p-2.5 focus:border-[#171B54] focus:outline-none text-gray-600"
+                            />
+                          </div>
+
+                          {/* Individual Advantages Row */}
+                          <div className="border-t border-gray-100 pt-3 space-y-4">
+                            <span className="block text-[10px] font-bold text-gray-400 uppercase">Advantages Cards ({localWhyUs.advantages.length})</span>
+                            
+                            {localWhyUs.advantages.map((adv, i) => (
+                              <div key={i} className="border border-gray-200 rounded-xl p-3 bg-slate-50 space-y-2">
+                                <span className="block font-mono text-[9px] text-[#171B54] font-bold">ADVANTAGE CARD #{i+1}</span>
+                                
+                                <input
+                                  type="text"
+                                  placeholder="Advantage Title..."
+                                  value={adv.title}
+                                  onChange={(e) => handleWhyUsAdvantageChange(i, 'title', e.target.value)}
+                                  className="w-full bg-white font-sans text-xs border border-gray-200 rounded px-2 py-1.5 focus:outline-none font-bold"
+                                />
+
+                                <textarea
+                                  rows={2}
+                                  placeholder="Detailed description pitch..."
+                                  value={adv.description}
+                                  onChange={(e) => handleWhyUsAdvantageChange(i, 'description', e.target.value)}
+                                  className="w-full bg-white font-sans text-xs border border-gray-200 rounded px-2 py-1.5 focus:outline-none text-gray-500"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* TAB 5: CONTACT INFRASTRUCTURE BRAND SPECIFICATIONS */}
                       {activeTab === 'contact' && (
                         <div className="space-y-4">
                           <div className="flex items-center gap-2 text-gray-500 font-sans text-xs border-b border-gray-100 pb-2">

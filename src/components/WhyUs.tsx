@@ -2,12 +2,21 @@ import React, { useState } from 'react';
 import { Award, Zap, Layers, RefreshCw, Sparkles, Cpu, CheckCircle2, Sliders, Gauge } from 'lucide-react';
 import { motion } from 'motion/react';
 
-export default function WhyUs() {
+interface WhyUsProps {
+  whyUsConfig?: {
+    badge: string;
+    title: string;
+    description: string;
+    advantages: { title: string; description: string }[];
+  };
+}
+
+export default function WhyUs({ whyUsConfig }: WhyUsProps) {
   const [pressSpeed, setPressSpeed] = useState(8500); // impressions per hour
   const [inkDensity, setInkDensity] = useState(98.4); // spectrophotometer density percentage
   const [selectedPlate, setSelectedPlate] = useState<'cyan' | 'magenta' | 'yellow' | 'black'>('cyan');
 
-  const advantages = [
+  const defaultAdvantages = [
     {
       icon: <Award size={24} className="text-[#F5A623]" />,
       title: 'Pantone® & Color Spectrometer Integrity',
@@ -30,6 +39,19 @@ export default function WhyUs() {
     }
   ];
 
+  const finalBadge = whyUsConfig?.badge || 'The Print Vision Calibration';
+  const finalTitle = whyUsConfig?.title || 'Engineered For Elite Apparel Brands';
+  const finalDescription = whyUsConfig?.description || 'We do not just manufacture standard paper tags. We build precision brand assets. Rooted in Faisalabad, Print Vision utilizes modern German machinery to run perfect identity plates for Pakistan\'s leading fashion exporters.';
+  
+  const advantagesList = (whyUsConfig?.advantages || defaultAdvantages).map((adv: any, index: number) => {
+    const fallback = defaultAdvantages[index] || defaultAdvantages[0];
+    return {
+      icon: fallback.icon,
+      title: adv.title || fallback.title,
+      description: adv.description || fallback.description
+    };
+  });
+
   // Visual offsets for interactive calibration display
   const plateOffsets = {
     cyan: { x: 0, y: 0, color: '#00AEEF' },
@@ -51,7 +73,7 @@ export default function WhyUs() {
             className="inline-flex items-center gap-2 bg-[#E31E2B]/10 text-[#E31E2B] rounded-full px-4 py-1.5 font-mono text-xs font-bold tracking-widest uppercase"
           >
             <Cpu size={12} className="animate-spin" />
-            The Print Vision Calibration
+            {finalBadge}
           </motion.span>
           
           <motion.h2 
@@ -61,7 +83,7 @@ export default function WhyUs() {
             transition={{ delay: 0.1 }}
             className="font-display font-black text-4xl sm:text-5xl text-[#171B54] mt-4 tracking-tight leading-none"
           >
-            Engineered For Elite Apparel Brands
+            {finalTitle}
           </motion.h2>
           
           <motion.p 
@@ -71,14 +93,14 @@ export default function WhyUs() {
             transition={{ delay: 0.2 }}
             className="font-sans text-base sm:text-lg text-gray-500 mt-4 max-w-2xl mx-auto leading-relaxed"
           >
-            We do not just manufacture standard paper tags. We build precision brand assets. Rooted in Faisalabad, Print Vision utilizes modern German machinery to run perfect identity plates for Pakistan's leading fashion exporters.
+            {finalDescription}
           </motion.p>
         </div>
 
         {/* Advantage Bento Grid */}
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {advantages.map((adv, index) => (
+            {advantagesList.map((adv, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
