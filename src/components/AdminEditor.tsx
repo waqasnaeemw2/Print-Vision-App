@@ -81,6 +81,20 @@ export default function AdminEditor({ isOpen, onClose, siteConfig, onUpdate, onR
     setLocalHero(prev => ({ ...prev, images: nextImages }));
   };
 
+  const handleHeroImageUpload = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        handleHeroImageChange(index, reader.result);
+        showToast(`Hero Image ${index + 1} uploaded and processed successfully!`);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleCatalogChange = (id: string, field: keyof CatalogItem, value: any) => {
     setLocalCatalogItems(prev =>
       prev.map(item => (item.id === id ? { ...item, [field]: value } : item))
@@ -680,17 +694,28 @@ export function calculatePrintCost(
                             </div>
 
                             {localHero.images.map((img, i) => (
-                              <div key={i} className="flex gap-2 items-center bg-slate-50 border border-gray-100 rounded-xl p-2">
-                                <img src={img || 'https://images.unsplash.com/photo-1603252109303-2751441dd157?w=100'} alt="" className="w-10 h-10 rounded-lg object-cover bg-gray-200 shrink-0" />
-                                <div className="flex-1">
-                                  <span className="block text-[9px] font-mono text-gray-400">HERO SCROLLING PHOTO {i + 1}</span>
-                                  <input
-                                    type="text"
-                                    value={img}
-                                    onChange={(e) => handleHeroImageChange(i, e.target.value)}
-                                    placeholder="Paste image address URL here..."
-                                    className="w-full bg-white font-mono text-[10px] border border-gray-200 rounded px-2 py-1 focus:border-[#171B54] focus:outline-none mt-0.5"
-                                  />
+                              <div key={i} className="flex gap-3 items-center bg-slate-50 border border-gray-100 rounded-xl p-3">
+                                <img src={img || 'https://images.unsplash.com/photo-1603252109303-2751441dd157?w=100'} alt="" className="w-12 h-12 rounded-lg object-cover bg-gray-200 shrink-0 border border-gray-200" />
+                                <div className="flex-1 space-y-1.5">
+                                  <span className="block text-[9px] font-mono font-bold text-gray-400 uppercase tracking-wider">HERO SCROLLING PHOTO {i + 1}</span>
+                                  <div className="flex flex-col sm:flex-row gap-2">
+                                    <input
+                                      type="text"
+                                      value={img}
+                                      onChange={(e) => handleHeroImageChange(i, e.target.value)}
+                                      placeholder="Paste image address URL here..."
+                                      className="flex-1 bg-white font-mono text-[10px] border border-gray-200 rounded-lg px-2 py-1.5 focus:border-[#171B54] focus:outline-none"
+                                    />
+                                    <label className="bg-slate-100 hover:bg-slate-200 text-[#171B54] text-center rounded-lg px-3 py-1.5 text-[10px] font-sans font-bold border border-dashed border-[#171B54]/35 cursor-pointer transition-colors shrink-0 flex items-center justify-center gap-1">
+                                      <Upload size={11} /> Upload File
+                                      <input 
+                                        type="file" 
+                                        accept="image/*" 
+                                        onChange={(e) => handleHeroImageUpload(i, e)}
+                                        className="hidden" 
+                                      />
+                                    </label>
+                                  </div>
                                 </div>
                               </div>
                             ))}
