@@ -214,7 +214,14 @@ export default function AdminEditor({ isOpen, onClose, siteConfig, onUpdate, onR
       })
     })
       .then(async (res) => {
-        const data = await res.json();
+        let data;
+        try {
+          data = await res.json();
+        } catch (parseErr) {
+          console.error('JSON parsing error:', parseErr);
+          throw new Error(`Server returned non-JSON response with status ${res.status}`);
+        }
+
         if (res.ok && data.success) {
           setIsLoggedIn(true);
           localStorage.setItem('pv_admin_token', data.token);
@@ -226,9 +233,13 @@ export default function AdminEditor({ isOpen, onClose, siteConfig, onUpdate, onR
           setAuthError(data.error || 'Invalid username or administrative password. Please try again.');
         }
       })
-      .catch((err) => {
+      .catch((err: any) => {
         console.error('Admin login error:', err);
-        setAuthError('Connection error. Failed to reach verification server.');
+        if (err.message && err.message.includes('non-JSON response')) {
+          setAuthError(`Server error (${err.message}). The verification server returned an invalid response.`);
+        } else {
+          setAuthError('Connection error. Failed to reach verification server.');
+        }
       });
   };
 

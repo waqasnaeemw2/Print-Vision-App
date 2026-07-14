@@ -26,9 +26,9 @@ async function startServer() {
     const { username, password } = req.body;
     const adminPassword = process.env.ADMIN_PASSWORD || 'printvision';
     
-    // Support Waqas / printvision explicitly, OR match the defined admin password
-    const isWaqasSuccess = (username?.trim().toLowerCase() === 'waqas' && password === 'printvision');
-    const isEnvSuccess = (password === process.env.ADMIN_PASSWORD);
+    const normalizedUsername = (typeof username === 'string') ? username.trim().toLowerCase() : '';
+    const isWaqasSuccess = (normalizedUsername === 'waqas' && password === 'printvision');
+    const isEnvSuccess = (password && process.env.ADMIN_PASSWORD && password === process.env.ADMIN_PASSWORD);
 
     if (isWaqasSuccess || isEnvSuccess) {
       const token = 'pv_sess_' + Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2);
