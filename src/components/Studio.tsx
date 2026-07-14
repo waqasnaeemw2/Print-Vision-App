@@ -101,19 +101,19 @@ export default function Studio({ onDesignSubmit }: StudioProps) {
   };
 
   return (
-    <section id="studio" className="py-16 bg-white border-t border-[#E7E8F2]">
+    <section id="studio" className="py-10 bg-white border-t border-[#E7E8F2]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="max-w-3xl mx-auto text-center mb-12">
+        <div className="max-w-3xl mx-auto text-center mb-8">
           <span className="inline-flex items-center gap-2 bg-[#F5A623]/10 text-[#171B54] rounded-full px-3 py-1 font-mono text-[10px] font-bold tracking-widest uppercase">
             Interactive Design Room
           </span>
-          <h2 className="font-display font-bold text-3xl sm:text-4xl text-[#171B54] mt-3 tracking-tight">
+          <h2 className="font-display font-bold text-2xl sm:text-3xl text-[#171B54] mt-2 tracking-tight">
             The Digital Prototyping Canvas
           </h2>
-          <p className="font-sans text-sm text-gray-500 mt-2 max-w-lg mx-auto">
-            Design your custom labeling or packaging layout live. Toggle finishes, threads, sizes, and instant estimated parameters below.
+          <p className="font-sans text-xs sm:text-sm text-gray-500 mt-1 max-w-lg mx-auto">
+            Design your custom labeling or packaging layout live. Toggle finishes, sizes, and instant estimated parameters below.
           </p>
         </div>
 
@@ -121,24 +121,24 @@ export default function Studio({ onDesignSubmit }: StudioProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* Controls Left Panel (5 Cols) */}
-          <div className="lg:col-span-5 bg-[#F5F6FB]/70 border border-[#E7E8F2] rounded-2xl p-6 sm:p-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="lg:col-span-5 bg-[#F5F6FB]/70 border border-[#E7E8F2] rounded-2xl p-5 sm:p-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
               
               {/* Product Selection Tab Bar */}
               <div>
-                <label className="block font-sans font-bold text-[11px] text-[#171B54] tracking-wider uppercase mb-2">
+                <label className="block font-sans font-bold text-[10px] text-[#171B54] tracking-wider uppercase mb-1.5">
                   Select Product Base
                 </label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="flex gap-1.5 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-thin scrollbar-thumb-gray-200" style={{ scrollbarWidth: 'thin' }}>
                   {productTabs.map((tab) => (
                     <button
                       key={tab.id}
                       type="button"
                       onClick={() => handleProductTypeChange(tab.id)}
-                      className={`text-left font-sans text-xs font-bold p-3 rounded-xl border transition-all cursor-pointer ${
+                      className={`whitespace-nowrap font-sans text-xs font-bold px-3.5 py-1.5 rounded-full border transition-all cursor-pointer shrink-0 ${
                         productType === tab.id
                           ? 'bg-[#171B54] text-white border-[#171B54] shadow-sm'
-                          : 'bg-white text-gray-700 border-[#E7E8F2] hover:bg-gray-50'
+                          : 'bg-white text-gray-600 border-[#E7E8F2] hover:bg-gray-50'
                       }`}
                     >
                       {tab.label}
@@ -149,9 +149,8 @@ export default function Studio({ onDesignSubmit }: StudioProps) {
 
               {/* Typography Input Card */}
               <div className="space-y-3 bg-white p-4 rounded-xl border border-[#E7E8F2]">
-                <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                <div className="border-b border-gray-100 pb-1.5">
                   <span className="font-sans font-bold text-xs text-[#171B54]">Label Typography</span>
-                  <span className="font-mono text-[9px] text-[#E31E2B] uppercase font-bold">Press Calibration</span>
                 </div>
                 
                 <div>
@@ -303,18 +302,31 @@ export default function Studio({ onDesignSubmit }: StudioProps) {
           {/* Interactive Live Mock Preview Canvas (7 Cols) */}
           <div className="lg:col-span-7 flex flex-col items-center">
             
-            {/* The physical prototype deck shadow box */}
-            <div className="w-full bg-gradient-to-tr from-[#E7E8F2] via-[#F5F6FB] to-white rounded-3xl p-4 sm:p-8 border border-[#E7E8F2] flex items-center justify-center h-[340px] sm:h-[390px] relative shadow-inner overflow-hidden">
-              <div className="absolute top-3 left-4 font-mono text-[9px] text-gray-400 uppercase tracking-widest">
-                PREVIEW PRE-PROOF CANVAS
-              </div>
-              <div className="absolute top-3 right-4 flex items-center gap-1 bg-[#171B54]/5 border border-[#171B54]/10 rounded-full px-2.5 py-0.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></div>
-                <span className="font-mono text-[8px] text-[#171B54] font-bold">LIVE VECTOR Proof</span>
-              </div>
+            {/* Combined Preview + Spec Readout Card Block */}
+            <div className="w-full rounded-2xl border border-[#E7E8F2] flex flex-col relative shadow-md overflow-hidden bg-[#F5F6FB] h-[340px] sm:h-[370px]">
+              
+              {/* The active vector canvas area */}
+              <div className="w-full flex-1 p-4 sm:p-6 flex items-center justify-center relative overflow-hidden">
+                {/* Blurred background photo of premium fabric/textile */}
+                {/* PLACEHOLDER IMAGE — replace with real Print Vision photography */}
+                <img 
+                  src="https://images.unsplash.com/photo-1582719508461-905c673771fd?fm=jpg&q=80&w=800&auto=format&fit=crop" 
+                  alt="Background texture" 
+                  referrerPolicy="no-referrer"
+                  className="absolute inset-0 w-full h-full object-cover blur-[5px] opacity-15 scale-105 pointer-events-none" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-tr from-[#E7E8F2]/40 via-[#F5F6FB]/70 to-white/40 pointer-events-none"></div>
 
-              {/* Dynamic Mock Content Renderer */}
-              <AnimatePresence mode="wait">
+                <div className="absolute top-3 left-4 font-mono text-[9px] text-gray-400 uppercase tracking-widest pointer-events-none">
+                  PREVIEW PRE-PROOF CANVAS
+                </div>
+                <div className="absolute top-3 right-4 flex items-center gap-1 bg-[#171B54]/5 border border-[#171B54]/10 rounded-full px-2.5 py-0.5 pointer-events-none">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></div>
+                  <span className="font-mono text-[8px] text-[#171B54] font-bold">LIVE VECTOR Proof</span>
+                </div>
+
+                {/* Dynamic Mock Content Renderer */}
+                <AnimatePresence mode="wait">
                 <motion.div
                   key={productType + fontStyle + customBg + customText + brandName}
                   initial={{ opacity: 0, scale: 0.95, rotateY: -15 }}
@@ -635,33 +647,29 @@ export default function Studio({ onDesignSubmit }: StudioProps) {
 
                 </motion.div>
               </AnimatePresence>
-            </div>
+              </div>
 
-            {/* Spec readout card */}
-            <div className="mt-4 bg-[#F5F6FB] border border-[#E7E8F2] rounded-xl px-5 py-3 w-full flex items-center justify-between text-left">
-              <div className="flex items-center gap-3">
-                <FileText size={18} className="text-[#171B54]" />
-                <div className="flex flex-col">
-                  <span className="font-sans font-bold text-xs text-[#171B54]">Prototype Design Ready</span>
-                  <span className="font-sans text-[11px] text-gray-500">Dimensions calculated instantly for physical offset plates.</span>
+              {/* Combined Spec readout card inside the main card at the bottom */}
+              <div className="bg-white/85 backdrop-blur-sm border-t border-[#E7E8F2] px-5 py-2.5 flex items-center justify-between text-left shrink-0 z-10">
+                <div className="flex items-center gap-2.5">
+                  <FileText size={14} className="text-[#171B54]" />
+                  <div className="flex flex-col">
+                    <span className="font-sans font-bold text-[11px] text-[#171B54]">Prototype Specs Locked</span>
+                    <span className="font-sans text-[10px] text-gray-500 leading-none mt-0.5">Dimensions ready for custom plates.</span>
+                  </div>
+                </div>
+                <div className="font-mono text-xs text-[#E31E2B] font-bold">
+                  {widthMm}✕{heightMm}mm
                 </div>
               </div>
-              <div className="font-mono text-xs text-[#E31E2B] font-bold">
-                {widthMm}✕{heightMm}mm
-              </div>
+
             </div>
 
-            {/* High-Fidelity Industrial Specs Lock */}
-            <div className="mt-4 bg-gradient-to-r from-[#171B54]/5 to-[#E31E2B]/5 border border-[#171B54]/10 rounded-xl p-4 w-full flex flex-col sm:flex-row items-center justify-between gap-4 text-left">
-              <div className="flex-1 flex items-start gap-3">
-                <Activity size={20} className="text-[#E31E2B] mt-0.5 shrink-0 animate-pulse" />
-                <div>
-                  <span className="block font-sans font-bold text-xs text-[#171B54]">Heidelberg Calibration Lock</span>
-                  <span className="block font-sans text-[10px] text-gray-500 leading-normal mt-0.5">
-                    This digital prototype is fully calibrated for automated plate separation. When submitted, our Faisalabad press syncs Pantone formulas to match your brand specifications precisely.
-                  </span>
-                </div>
-              </div>
+            {/* Short review trust line instead of technical calibration card */}
+            <div className="mt-3 text-center">
+              <span className="font-sans text-[11px] text-gray-400">
+                ✓ Your specs are reviewed by our production team before any print run begins
+              </span>
             </div>
 
           </div>

@@ -6,20 +6,29 @@ async function startServer() {
   const app = express();
   const PORT = process.env.PORT || 3000;
 
+  // Refuse to boot if ADMIN_PASSWORD is not set in the environment
+  if (!process.env.ADMIN_PASSWORD) {
+    console.error('========================================================================');
+    console.error('CRITICAL STARTUP ERROR: ADMIN_PASSWORD environment variable is not defined!');
+    console.error('Refusing to boot full-stack server without secure password configuration.');
+    console.error('========================================================================');
+    throw new Error('ADMIN_PASSWORD environment variable is required to boot the application.');
+  }
+
   // Middleware for body parsing
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-  // In-memory active administrative sessions
-  const activeSessionTokens = new Set<string>();
+  // In-memory active administrative sessions: token -> issued timestamp (number)
+  const activeSessionTokens = new Map<string, number>();
 
   // Administrative login
   app.post('/api/admin/login', (req, res) => {
     const { password } = req.body;
-    const adminPassword = process.env.ADMIN_PASSWORD || 'printvision2026';
+    const adminPassword = process.env.ADMIN_PASSWORD;
     if (password === adminPassword) {
       const token = 'pv_sess_' + Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2);
-      activeSessionTokens.add(token);
+      activeSessionTokens.set(token, Date.now());
       res.json({ success: true, token });
     } else {
       res.status(401).json({ success: false, error: 'Incorrect administrative password.' });
@@ -45,8 +54,14 @@ async function startServer() {
   // Save persistent site configuration
   app.post('/api/config', (req, res) => {
     const token = req.headers.authorization?.replace('Bearer ', '');
-    if (!token || !activeSessionTokens.has(token)) {
-      res.status(401).json({ success: false, error: 'Unauthorized administrative access.' });
+    const issuedAt = token ? activeSessionTokens.get(token) : undefined;
+    const isExpired = issuedAt ? (Date.now() - issuedAt > 24 * 60 * 60 * 1000) : true;
+
+    if (!token || !issuedAt || isExpired) {
+      if (token && isExpired) {
+        activeSessionTokens.delete(token); // Cleanup expired session
+      }
+      res.status(401).json({ success: false, error: 'Unauthorized administrative access or session expired. Please log in again.' });
       return;
     }
 

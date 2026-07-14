@@ -228,6 +228,9 @@ export default function App() {
           images={siteConfig.hero.images}
         />
 
+        {/* Digital product catalog specs with dynamic editable catalog items */}
+        <Catalog catalogItems={siteConfig.catalogItems} />
+
         {/* Dynamic Trust / Stats strip */}
         <TrustStrip />
 
@@ -236,9 +239,6 @@ export default function App() {
 
         {/* Interactive Process / How-it-Works Section */}
         <Process />
-
-        {/* Digital product catalog specs with dynamic editable catalog items */}
-        <Catalog catalogItems={siteConfig.catalogItems} />
 
         {/* Volume & Cost estimator sliderboard */}
         <Estimator onEstimateSelect={handleEstimateFromCalculator} pricingRules={siteConfig.pricingRules} />

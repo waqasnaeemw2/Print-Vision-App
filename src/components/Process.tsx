@@ -8,6 +8,7 @@ interface ProcessStep {
   title: string;
   description: string;
   icon: React.ReactNode;
+  imageUrl: string;
 }
 
 export default function Process() {
@@ -16,25 +17,29 @@ export default function Process() {
       number: "01",
       title: "Design & Spec Lock",
       description: "Submit or calibrate vectors. We lock plate layout, margins, and exact color codes.",
-      icon: <Palette size={20} className="text-[#F5A623]" />
+      icon: <Palette size={20} className="text-[#F5A623]" />,
+      imageUrl: "https://images.unsplash.com/photo-1541462608141-2758a6e4852f?fm=jpg&q=80&w=400&auto=format&fit=crop"
     },
     {
       number: "02",
       title: "Proof Validation",
       description: "Approve custom virtual proofs or receive physical swatch kits in Hand before run.",
-      icon: <ShieldAlert size={20} className="text-[#E31E2B]" />
+      icon: <ShieldAlert size={20} className="text-[#E31E2B]" />,
+      imageUrl: "https://images.unsplash.com/photo-1505356822725-085e18f4d0b9?fm=jpg&q=80&w=400&auto=format&fit=crop"
     },
     {
       number: "03",
       title: "High-Speed Production",
       description: "Our Faisalabad presses run your offset, rotary, or rigid packaging specifications.",
-      icon: <Printer size={20} className="text-blue-500" />
+      icon: <Printer size={20} className="text-blue-500" />,
+      imageUrl: "https://images.unsplash.com/photo-1616400619175-5ebd300900cf?fm=jpg&q=80&w=400&auto=format&fit=crop"
     },
     {
       number: "04",
       title: "Logistics Dispatch",
       description: "Sealed cargo delivery direct to your knitting mills or global shipping docks.",
-      icon: <Truck size={20} className="text-emerald-500" />
+      icon: <Truck size={20} className="text-emerald-500" />,
+      imageUrl: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?fm=jpg&q=80&w=400&auto=format&fit=crop"
     }
   ];
 
@@ -168,6 +173,18 @@ export default function Process() {
                 transition={{ delay: idx * 0.15, duration: 0.6 }}
                 className="flex flex-row md:flex-col items-start md:items-center text-left md:text-center gap-6 md:gap-0 group"
               >
+                {/* Desktop: Step Image sits above everything */}
+                <div className="hidden md:block w-full h-32 rounded-xl overflow-hidden relative mb-6 shadow-sm border border-gray-100">
+                  {/* PLACEHOLDER IMAGE — replace with real Print Vision photography */}
+                  <img
+                    src={step.imageUrl}
+                    alt={step.title}
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-[#171B54]/10 group-hover:bg-[#171B54]/0 transition-colors duration-300"></div>
+                </div>
+
                 {/* Icon Circle */}
                 <div className="relative shrink-0 md:mb-6">
                   <div className="w-12 h-12 rounded-full bg-white border-2 border-[#E7E8F2] flex items-center justify-center shadow-md relative z-10 group-hover:border-[#171B54] group-hover:shadow-lg transition-all duration-300">
@@ -179,6 +196,18 @@ export default function Process() {
 
                 {/* Content */}
                 <div className="flex-1 md:flex-none">
+                  {/* Mobile Step Image sits inside content right column */}
+                  <div className="block md:hidden w-full h-28 rounded-xl overflow-hidden relative mb-4 shadow-sm border border-gray-100">
+                    {/* PLACEHOLDER IMAGE — replace with real Print Vision photography */}
+                    <img
+                      src={step.imageUrl}
+                      alt={step.title}
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-[#171B54]/10 group-hover:bg-[#171B54]/0 transition-colors duration-300"></div>
+                  </div>
+
                   <div className="flex items-center gap-2 md:justify-center">
                     <span className="font-mono text-xs font-black text-gray-400 bg-gray-100 px-2 py-0.5 rounded">
                       {step.number}
