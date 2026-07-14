@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Sliders, HelpCircle, Calendar, ShieldCheck, DollarSign, Calculator } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ProductType, EstimateResult } from '../types';
+import { DEFAULT_PRICING_RULES } from '../data';
 
 interface EstimatorProps {
   onEstimateSelect: (estimate: { type: ProductType; quantity: number; costBreakdown: EstimateResult }) => void;
@@ -9,17 +10,7 @@ interface EstimatorProps {
 }
 
 export default function Estimator({ onEstimateSelect, pricingRules }: EstimatorProps) {
-  const defaultPricingRules = [
-    { type: 'woven-labels', label: 'Woven Labels', basePrice: 2.5, setupFee: 2500, productionDays: 10, minQty: 1000 },
-    { type: 'printed-labels', label: 'Printed Tape Labels', basePrice: 1.5, setupFee: 1200, productionDays: 6, minQty: 1000 },
-    { type: 'hang-tags', label: 'Apparel Hang Tags', basePrice: 3.5, setupFee: 1800, productionDays: 7, minQty: 1000 },
-    { type: 'barcode-stickers', label: 'Barcode POS Stickers', basePrice: 0.4, setupFee: 800, productionDays: 4, minQty: 2000 },
-    { type: 'packaging-boxes', label: 'Rigid Cardboard Boxes', basePrice: 45.0, setupFee: 5000, productionDays: 14, minQty: 500 },
-    { type: 'satin-labels', label: 'Premium Satin Labels', basePrice: 2.0, setupFee: 1000, productionDays: 5, minQty: 1000 },
-    { type: 'printed-bags', label: 'Laminated Paper Bags', basePrice: 28.0, setupFee: 3500, productionDays: 12, minQty: 1000 }
-  ];
-
-  const rulesList = pricingRules && pricingRules.length > 0 ? pricingRules : defaultPricingRules;
+  const rulesList = pricingRules && pricingRules.length > 0 ? pricingRules : DEFAULT_PRICING_RULES;
 
   const [productType, setProductType] = useState<ProductType>(rulesList[0]?.type as ProductType || 'woven-labels');
   const [quantity, setQuantity] = useState(3000);

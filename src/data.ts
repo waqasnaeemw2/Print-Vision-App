@@ -93,6 +93,16 @@ export const CATALOG_ITEMS: CatalogItem[] = [
   }
 ];
 
+export const DEFAULT_PRICING_RULES = [
+  { type: 'woven-labels', label: 'Woven Labels', basePrice: 2.5, setupFee: 2500, productionDays: 10, minQty: 1000 },
+  { type: 'printed-labels', label: 'Printed Tape Labels', basePrice: 1.5, setupFee: 1200, productionDays: 6, minQty: 1000 },
+  { type: 'hang-tags', label: 'Apparel Hang Tags', basePrice: 3.5, setupFee: 1800, productionDays: 7, minQty: 1000 },
+  { type: 'barcode-stickers', label: 'Barcode POS Stickers', basePrice: 0.4, setupFee: 800, productionDays: 4, minQty: 2000 },
+  { type: 'packaging-boxes', label: 'Rigid Cardboard Boxes', basePrice: 45.0, setupFee: 5000, productionDays: 14, minQty: 500 },
+  { type: 'satin-labels', label: 'Premium Satin Labels', basePrice: 2.0, setupFee: 1000, productionDays: 5, minQty: 1000 },
+  { type: 'printed-bags', label: 'Laminated Paper Bags', basePrice: 28.0, setupFee: 3500, productionDays: 12, minQty: 1000 }
+];
+
 export const FINISH_OPTIONS = {
   'woven-labels': ['Damask Standard', 'Satin Backing', 'Ultrasonic Sealed Edge', 'Metallic Thread Accent'],
   'hang-tags': ['Matte Finished Board', 'Uncoated Recycled Kraft', 'Luxury Velvet-Coated', 'Spot-UV Textured Board'],

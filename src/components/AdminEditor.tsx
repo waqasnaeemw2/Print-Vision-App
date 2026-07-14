@@ -45,7 +45,7 @@ export default function AdminEditor({ isOpen, onClose, siteConfig, onUpdate, onR
 
   // Authentication states
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    return localStorage.getItem('pv_admin_logged_in') === 'true';
+    return !!localStorage.getItem('pv_admin_token');
   });
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -201,27 +201,37 @@ export default function AdminEditor({ isOpen, onClose, siteConfig, onUpdate, onR
 
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const normalizedUser = username.trim().toLowerCase();
-    const userPassword = password.trim();
+    setAuthError('');
 
-    const isAdminUser = normalizedUser === 'admin' || normalizedUser === 'waqas' || normalizedUser === 'waqas.naeem.w2@gmail.com';
-    const isValidPass = userPassword === 'printvision2026' || userPassword === 'admin' || userPassword === '3027000073' || userPassword === 'waqas' || userPassword === 'waqas123';
-
-    if (isAdminUser && isValidPass) {
-      setIsLoggedIn(true);
-      localStorage.setItem('pv_admin_logged_in', 'true');
-      setAuthError('');
-      setUsername('');
-      setPassword('');
-      showToast('Login successful! Welcome Waqas to Print Vision Admin Portal.');
-    } else {
-      setAuthError('Invalid administrative username or passcode. Please try again.');
-    }
+    fetch('/api/admin/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ password: password.trim() })
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (res.ok && data.success) {
+          setIsLoggedIn(true);
+          localStorage.setItem('pv_admin_token', data.token);
+          setAuthError('');
+          setUsername('');
+          setPassword('');
+          showToast('Login successful! Welcome to the Print Vision Admin Portal.');
+        } else {
+          setAuthError(data.error || 'Invalid passcode or credentials. Please try again.');
+        }
+      })
+      .catch((err) => {
+        console.error('Admin login error:', err);
+        setAuthError('Connection error. Failed to reach verification server.');
+      });
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    localStorage.removeItem('pv_admin_logged_in');
+    localStorage.removeItem('pv_admin_token');
     showToast('Logged out of Admin Portal.');
   };
 
@@ -480,9 +490,6 @@ export function calculatePrintCost(
                   <div className="border-t border-gray-100 pt-6 text-center">
                     <span className="font-mono text-[9px] text-gray-400 uppercase tracking-widest block">
                       PRINT VISION INDUSTRIAL CALIBRATION
-                    </span>
-                    <span className="text-[10px] text-gray-500 font-sans mt-1.5 block">
-                      Default credentials: <code className="font-mono bg-gray-100 px-1 py-0.5 rounded text-[#171B54]">admin</code> / <code className="font-mono bg-gray-100 px-1 py-0.5 rounded text-[#171B54]">printvision2026</code>
                     </span>
                   </div>
                 </div>

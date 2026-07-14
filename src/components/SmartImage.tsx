@@ -78,6 +78,7 @@ export default function SmartImage({ src, alt, className = '', productType = '',
         src={src}
         alt={alt}
         onError={() => setHasError(true)}
+        loading="lazy"
         className={`${className} transition-all duration-300`}
         style={{
           objectFit: imageFit,

@@ -1,5 +1,6 @@
 import express from 'express';
 import path from 'path';
+import fs from 'fs';
 
 async function startServer() {
   const app = express();
@@ -8,6 +9,165 @@ async function startServer() {
   // Middleware for body parsing
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+  // In-memory active administrative sessions
+  const activeSessionTokens = new Set<string>();
+
+  // Administrative login
+  app.post('/api/admin/login', (req, res) => {
+    const { password } = req.body;
+    const adminPassword = process.env.ADMIN_PASSWORD || 'printvision2026';
+    if (password === adminPassword) {
+      const token = 'pv_sess_' + Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2);
+      activeSessionTokens.add(token);
+      res.json({ success: true, token });
+    } else {
+      res.status(401).json({ success: false, error: 'Incorrect administrative password.' });
+    }
+  });
+
+  // Fetch persistent site configuration
+  app.get('/api/config', (req, res) => {
+    const filePath = path.join(process.cwd(), 'config.json');
+    if (fs.existsSync(filePath)) {
+      try {
+        const data = fs.readFileSync(filePath, 'utf-8');
+        res.json(JSON.parse(data));
+        return;
+      } catch (err) {
+        console.error('Error reading config.json:', err);
+      }
+    }
+    // Return empty configuration so client defaults can boot
+    res.json({});
+  });
+
+  // Save persistent site configuration
+  app.post('/api/config', (req, res) => {
+    const token = req.headers.authorization?.replace('Bearer ', '');
+    if (!token || !activeSessionTokens.has(token)) {
+      res.status(401).json({ success: false, error: 'Unauthorized administrative access.' });
+      return;
+    }
+
+    try {
+      const filePath = path.join(process.cwd(), 'config.json');
+      fs.writeFileSync(filePath, JSON.stringify(req.body, null, 2), 'utf-8');
+      res.json({ success: true, message: 'Configuration saved successfully!' });
+    } catch (err: any) {
+      console.error('Error saving config.json:', err);
+      res.status(500).json({ success: false, error: 'Failed to write configuration file: ' + err.message });
+    }
+  });
+
+  // Lead contact form submission with spam control, local backup logging, and email proxying
+  app.post('/api/contact', async (req, res) => {
+    try {
+      const { name, phone, email, product, details, website } = req.body;
+
+      // Spam control: honeypot check
+      if (website) {
+        console.warn('Silent mitigation of honeypot spam submission.');
+        res.json({ success: true, message: 'Specifications logged successfully.' });
+        return;
+      }
+
+      // Base validations
+      if (!name || !phone || !email || !product || !details) {
+        res.status(400).json({ success: false, error: 'All coordinate and detail parameters are required.' });
+        return;
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        res.status(400).json({ success: false, error: 'Please submit a valid email address format.' });
+        return;
+      }
+
+      // Local persistent backup storage (JSON)
+      const submission = {
+        id: Date.now(),
+        name,
+        phone,
+        email,
+        product,
+        details,
+        createdAt: new Date().toISOString()
+      };
+
+      const submissionsPath = path.join(process.cwd(), 'submissions.json');
+      let submissionsList = [];
+      try {
+        if (fs.existsSync(submissionsPath)) {
+          const fileData = fs.readFileSync(submissionsPath, 'utf-8');
+          submissionsList = JSON.parse(fileData);
+        }
+      } catch (err) {
+        console.error('Error reading submissions persistent file:', err);
+      }
+
+      submissionsList.push(submission);
+
+      try {
+        fs.writeFileSync(submissionsPath, JSON.stringify(submissionsList, null, 2), 'utf-8');
+      } catch (err) {
+        console.error('Error writing to submissions backup file:', err);
+      }
+
+      // Transactional Email notification proxying (via Resend)
+      const resendApiKey = process.env.RESEND_API_KEY;
+      if (resendApiKey) {
+        try {
+          const emailResponse = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${resendApiKey}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              from: 'Print Vision Web <onboarding@resend.dev>',
+              to: 'info@printvisionpk.com',
+              subject: `New Lead from ${name} - Print Vision`,
+              html: `
+                <div style="font-family: sans-serif; padding: 20px; color: #171b54; max-width: 600px; margin: 0 auto; border: 1px solid #e7e8f2; border-radius: 12px;">
+                  <h2 style="border-bottom: 2px solid #171b54; padding-bottom: 8px;">New Production Inquiry</h2>
+                  <p><strong>Name:</strong> ${name}</p>
+                  <p><strong>WhatsApp/Phone:</strong> ${phone}</p>
+                  <p><strong>Email:</strong> ${email}</p>
+                  <p><strong>Desired Product Category:</strong> ${product.toUpperCase().replace('-', ' ')}</p>
+                  <div style="background-color: #f5f6fb; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                    <h3 style="margin-top: 0;">Specification Details:</h3>
+                    <p style="white-space: pre-wrap; font-size: 14px; line-height: 1.5; color: #4a5568;">${details}</p>
+                  </div>
+                  <hr style="border: 0; border-top: 1px solid #e7e8f2; margin: 20px 0;"/>
+                  <p style="font-size: 11px; color: #718096; text-align: center;">Print Vision Pakistan • Eid Gah Road, Faisalabad</p>
+                </div>
+              `
+            })
+          });
+
+          if (!emailResponse.ok) {
+            const errBody = await emailResponse.text();
+            console.error('Resend API responded with an error:', errBody);
+          } else {
+            console.log('Lead notification email sent successfully.');
+          }
+        } catch (err) {
+          console.error('Error sending lead notification email:', err);
+        }
+      } else {
+        console.warn('RESEND_API_KEY not set. Email dispatch bypassed, submission logged locally.');
+      }
+
+      res.json({ 
+        success: true, 
+        message: 'Your production specifications have been logged securely! Our logistics desk in Faisalabad will get in touch shortly.' 
+      });
+    } catch (err: any) {
+      console.error('Contact endpoint exception:', err);
+      res.status(500).json({ success: false, error: 'A server error occurred: ' + err.message });
+    }
+  });
 
   // WordPress REST API connection test proxy
   app.post('/api/wordpress/test', async (req, res) => {

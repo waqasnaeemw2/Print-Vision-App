@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Studio from './components/Studio';
@@ -7,11 +7,12 @@ import Estimator from './components/Estimator';
 import WhyUs from './components/WhyUs';
 import ContactForm from './components/ContactForm';
 import Footer from './components/Footer';
-import AdminEditor from './components/AdminEditor';
-import { CATALOG_ITEMS } from './data';
+import { CATALOG_ITEMS, DEFAULT_PRICING_RULES } from './data';
 import { CustomDesign, ProductType, EstimateResult } from './types';
 import { motion } from 'motion/react';
 import { Settings } from 'lucide-react';
+
+const AdminEditor = React.lazy(() => import('./components/AdminEditor'));
 
 const defaultHero = {
   headline: "High-Speed Commercial Apparel Print & Packaging",
@@ -32,24 +33,16 @@ const defaultContact = {
   whatsapp: "923027000073"
 };
 
-const defaultPricingRules = [
-  { type: 'woven-labels', label: 'Woven Labels', basePrice: 2.5, setupFee: 2500, productionDays: 10, minQty: 1000 },
-  { type: 'printed-labels', label: 'Printed Tape Labels', basePrice: 1.5, setupFee: 1200, productionDays: 6, minQty: 1000 },
-  { type: 'hang-tags', label: 'Apparel Hang Tags', basePrice: 3.5, setupFee: 1800, productionDays: 7, minQty: 1000 },
-  { type: 'barcode-stickers', label: 'Barcode POS Stickers', basePrice: 0.4, setupFee: 800, productionDays: 4, minQty: 2000 },
-  { type: 'packaging-boxes', label: 'Rigid Cardboard Boxes', basePrice: 45.0, setupFee: 5000, productionDays: 14, minQty: 500 },
-  { type: 'satin-labels', label: 'Premium Satin Labels', basePrice: 2.0, setupFee: 1000, productionDays: 5, minQty: 1000 },
-  { type: 'printed-bags', label: 'Laminated Paper Bags', basePrice: 28.0, setupFee: 3500, productionDays: 12, minQty: 1000 }
-];
+const defaultPricingRules = DEFAULT_PRICING_RULES;
 
 const defaultWhyUs = {
   badge: "The Print Vision Calibration",
   title: "Engineered For Elite Apparel Brands",
-  description: "We do not just manufacture standard paper tags. We build precision brand assets. Rooted in Faisalabad, Print Vision utilizes modern German machinery to run perfect identity plates for Pakistan's leading fashion exporters.",
+  description: "We do not just manufacture standard paper tags. We build precision brand assets. Rooted in Faisalabad, Print Vision utilizes modern, state-of-the-art print machinery to run perfect identity plates for Pakistan's leading fashion exporters.",
   advantages: [
     {
-      title: "Pantone® & Color Spectrometer Integrity",
-      description: "Print Vision implements automated colorimeter-locked offset plate checks. We guarantee 100% color consistency between your primary luxury fabrics and brand hang tags, run after run."
+      title: "Spectrophotometer Color Alignment",
+      description: "Print Vision implements automated colorimeter-guided offset plate checks to align label print colors with your fabric base. We prioritize high-grade consistency across all production batches."
     },
     {
       title: "Faisalabad Direct High-Speed Hub",
@@ -60,8 +53,8 @@ const defaultWhyUs = {
       description: "Expand your brand's touchpoints. We specialize in velvet-soft matte lamination, high-build Spot UV finishes, micro-embossed textured cardboards, and real hot-stamped gold foil trims."
     },
     {
-      title: "OEKO-TEX® Certified Dye Integrity",
-      description: "Our partner mills utilize only hyper-dense, skin-safe, hypoallergenic polyester yarns. Fully resistant to commercial laundry friction and harsh enzyme washes, keeping tags crisp."
+      title: "Sustainably-Sourced Premium Dye Integrity",
+      description: "Our printing processes use high-density, hypoallergenic inks and yarns. Fully resistant to washing friction and rigorous commercial laundry cycles, keeping tags and labels looking crisp."
     }
   ]
 };
@@ -103,6 +96,27 @@ export default function App() {
     };
   });
 
+  // Load configuration from server-side database on mount
+  useEffect(() => {
+    fetch('/api/config')
+      .then((res) => {
+        if (res.ok) return res.json();
+        throw new Error('Failed to load server site config');
+      })
+      .then((data) => {
+        if (data && data.hero) {
+          setSiteConfig(data);
+          // Sync client-side backup cache
+          localStorage.setItem('printvision_hero_config', JSON.stringify(data.hero));
+          localStorage.setItem('printvision_catalog_config', JSON.stringify(data.catalogItems));
+          localStorage.setItem('printvision_contact_config', JSON.stringify(data.contact));
+          localStorage.setItem('printvision_pricing_rules', JSON.stringify(data.pricingRules));
+          localStorage.setItem('printvision_whyus_config', JSON.stringify(data.whyUsConfig));
+        }
+      })
+      .catch((err) => console.error('Site configuration load error:', err));
+  }, []);
+
   const handleUpdateConfig = (newConfig: typeof siteConfig) => {
     setSiteConfig(newConfig);
     localStorage.setItem('printvision_hero_config', JSON.stringify(newConfig.hero));
@@ -110,6 +124,20 @@ export default function App() {
     localStorage.setItem('printvision_contact_config', JSON.stringify(newConfig.contact));
     localStorage.setItem('printvision_pricing_rules', JSON.stringify(newConfig.pricingRules));
     localStorage.setItem('printvision_whyus_config', JSON.stringify(newConfig.whyUsConfig));
+
+    const token = localStorage.getItem('pv_admin_token') || '';
+    fetch('/api/config', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(newConfig)
+    })
+      .then((res) => {
+        if (!res.ok) console.error('Failed to save config to server storage');
+      })
+      .catch((err) => console.error('Save config server error:', err));
   };
 
   const handleResetConfig = () => {
@@ -118,13 +146,30 @@ export default function App() {
     localStorage.removeItem('printvision_contact_config');
     localStorage.removeItem('printvision_pricing_rules');
     localStorage.removeItem('printvision_whyus_config');
-    setSiteConfig({
+    
+    const defaultConfig = {
       hero: defaultHero,
       catalogItems: CATALOG_ITEMS,
       contact: defaultContact,
       pricingRules: defaultPricingRules,
       whyUsConfig: defaultWhyUs
-    });
+    };
+    
+    setSiteConfig(defaultConfig);
+
+    const token = localStorage.getItem('pv_admin_token') || '';
+    fetch('/api/config', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(defaultConfig)
+    })
+      .then((res) => {
+        if (!res.ok) console.error('Failed to reset config on server storage');
+      })
+      .catch((err) => console.error('Reset config server error:', err));
   };
 
   const handleScrollToSection = (sectionId: string) => {
@@ -220,13 +265,17 @@ export default function App() {
       </motion.a>
 
       {/* Interactive Admin Editor Sidebar */}
-      <AdminEditor
-        isOpen={isAdminOpen}
-        onClose={() => setIsAdminOpen(false)}
-        siteConfig={siteConfig}
-        onUpdate={handleUpdateConfig}
-        onReset={handleResetConfig}
-      />
+      {isAdminOpen && (
+        <Suspense fallback={null}>
+          <AdminEditor
+            isOpen={isAdminOpen}
+            onClose={() => setIsAdminOpen(false)}
+            siteConfig={siteConfig}
+            onUpdate={handleUpdateConfig}
+            onReset={handleResetConfig}
+          />
+        </Suspense>
+      )}
 
     </div>
   );

@@ -16,6 +16,8 @@ export default function ContactForm({ prefilledEstimate, prefilledDesign }: Cont
   const [details, setDetails] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [website, setWebsite] = useState('');
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Prefill details whenever estimate transfers
   useEffect(() => {
@@ -36,23 +38,37 @@ export default function ContactForm({ prefilledEstimate, prefilledDesign }: Cont
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
+    setErrorMsg(null);
     
-    // Smooth mockup of server communication
-    setTimeout(() => {
-      setSubmitting(false);
-      setSuccess(true);
-      
-      // Open email with prefilled specifications as fallback
-      const subject = encodeURIComponent(`PV Order Specs Request — ${product.toUpperCase() || 'Printing & Packaging'}`);
-      const body = encodeURIComponent(
-        `Hi Print Vision,\n\nI want to place an order based on these specifications:\n\n` +
-        `Name: ${name}\n` +
-        `Phone: ${phone}\n` +
-        `Email: ${email}\n\n` +
-        `${details}`
-      );
-      window.location.href = `mailto:info@printvisionpk.com?subject=${subject}&body=${body}`;
-    }, 1500);
+    fetch('/api/contact', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name,
+        phone,
+        email,
+        product,
+        details,
+        website
+      })
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (res.ok && data.success) {
+          setSuccess(true);
+        } else {
+          setErrorMsg(data.error || 'Failed to submit production specifications. Please check your parameters.');
+        }
+      })
+      .catch((err) => {
+        console.error('Contact transmission error:', err);
+        setErrorMsg('Network connectivity issue. Please transmit via manual email backup.');
+      })
+      .finally(() => {
+        setSubmitting(false);
+      });
   };
 
   return (
@@ -217,13 +233,31 @@ export default function ContactForm({ prefilledEstimate, prefilledDesign }: Cont
                     />
                   </div>
 
+                  {/* Honeypot field for anti-spam protection */}
+                  <div className="hidden" aria-hidden="true">
+                    <label className="text-xs text-gray-400">Do not fill this website field if human:</label>
+                    <input
+                      type="text"
+                      value={website}
+                      onChange={(e) => setWebsite(e.target.value)}
+                      tabIndex={-1}
+                      autoComplete="off"
+                    />
+                  </div>
+
+                  {errorMsg && (
+                    <div className="bg-red-500/20 border border-red-500/30 text-red-200 text-xs rounded-xl p-3 text-left font-sans">
+                      ⚠️ {errorMsg}
+                    </div>
+                  )}
+
                   <button
                     type="submit"
                     disabled={submitting}
                     className="w-full bg-gradient-to-r from-[#E31E2B] to-amber-500 hover:opacity-95 disabled:opacity-50 text-white font-sans font-bold text-sm py-4 rounded-xl shadow-lg transition-transform hover:-translate-y-0.5 cursor-pointer flex items-center justify-center gap-2"
                   >
                     <Send size={15} />
-                    {submitting ? 'Connecting with Faisalabad desk...' : 'Transmit Production Specs →'}
+                    {submitting ? 'Transmitting to Faisalabad...' : 'Transmit Production Specs →'}
                   </button>
 
                   <div className="flex items-center justify-center gap-1.5 font-mono text-[9px] text-gray-400 uppercase tracking-widest pt-2">
@@ -241,9 +275,9 @@ export default function ContactForm({ prefilledEstimate, prefilledDesign }: Cont
                 >
                   <CheckCircle2 size={56} className="text-[#F5A623] animate-pulse" />
                   <div>
-                    <h3 className="font-display font-bold text-2xl text-[#F3E5AB]">Transmission Successful!</h3>
+                    <h3 className="font-display font-bold text-2xl text-[#F3E5AB]">Transmission Logged!</h3>
                     <p className="font-sans text-xs text-gray-300 mt-2 max-w-sm leading-relaxed">
-                      We have compiled your digital specifications into a draft email. Please click "Confirm Email Client" if your desktop mail app did not open automatically.
+                      Your specifications have been recorded on our secure servers. A Faisalabad representative will contact you via WhatsApp/Email shortly. Use the manual fallback button if you need to dispatch via your own email client.
                     </p>
                   </div>
                   
@@ -262,10 +296,10 @@ export default function ContactForm({ prefilledEstimate, prefilledDesign }: Cont
                       Make Another Inquiry
                     </button>
                     <a
-                      href={`mailto:info@printvisionpk.com?subject=Specs Request&body=${encodeURIComponent(details)}`}
+                      href={`mailto:info@printvisionpk.com?subject=PV Order Specs Request&body=${encodeURIComponent(details)}`}
                       className="bg-gradient-to-r from-[#F5A623] to-amber-500 text-[#171B54] font-sans font-bold text-xs py-3 rounded-xl block text-center"
                     >
-                      Confirm Email Client Manual
+                      Email Client Manual Fallback
                     </a>
                   </div>
                 </motion.div>

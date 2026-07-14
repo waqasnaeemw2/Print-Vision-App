@@ -19,8 +19,8 @@ export default function WhyUs({ whyUsConfig }: WhyUsProps) {
   const defaultAdvantages = [
     {
       icon: <Award size={24} className="text-[#F5A623]" />,
-      title: 'Pantone® & Color Spectrometer Integrity',
-      description: 'Print Vision implements automated colorimeter-locked offset plate checks. We guarantee 100% color consistency between your primary luxury fabrics and brand hang tags, run after run.'
+      title: 'Spectrophotometer Color Alignment',
+      description: 'Print Vision implements automated colorimeter-guided offset plate checks to align label print colors with your fabric base. We prioritize high-grade consistency across all production batches.'
     },
     {
       icon: <Zap size={24} className="text-[#E31E2B]" />,
@@ -34,14 +34,14 @@ export default function WhyUs({ whyUsConfig }: WhyUsProps) {
     },
     {
       icon: <RefreshCw size={24} className="text-emerald-500" />,
-      title: 'OEKO-TEX® Certified Dye Integrity',
-      description: 'Our partner mills utilize only hyper-dense, skin-safe, hypoallergenic polyester yarns. Fully resistant to commercial laundry friction and harsh enzyme washes, keeping tags crisp.'
+      title: 'Sustainably-Sourced Premium Dye Integrity',
+      description: 'Our printing processes use high-density, hypoallergenic inks and yarns. Fully resistant to washing friction and rigorous commercial laundry cycles, keeping tags and labels looking crisp.'
     }
   ];
 
   const finalBadge = whyUsConfig?.badge || 'The Print Vision Calibration';
   const finalTitle = whyUsConfig?.title || 'Engineered For Elite Apparel Brands';
-  const finalDescription = whyUsConfig?.description || 'We do not just manufacture standard paper tags. We build precision brand assets. Rooted in Faisalabad, Print Vision utilizes modern German machinery to run perfect identity plates for Pakistan\'s leading fashion exporters.';
+  const finalDescription = whyUsConfig?.description || 'We do not just manufacture standard paper tags. We build precision brand assets. Rooted in Faisalabad, Print Vision utilizes modern, state-of-the-art print machinery to run perfect identity plates for Pakistan\'s leading fashion exporters.';
   
   const advantagesList = (whyUsConfig?.advantages || defaultAdvantages).map((adv: any, index: number) => {
     const fallback = defaultAdvantages[index] || defaultAdvantages[0];
