@@ -109,8 +109,10 @@ export default function Studio({ onDesignSubmit }: StudioProps) {
           <span className="inline-flex items-center gap-2 bg-[#F5A623]/10 text-[#171B54] rounded-full px-3 py-1 font-mono text-[10px] font-bold tracking-widest uppercase">
             Interactive Design Room
           </span>
-          <h2 className="font-display font-bold text-2xl sm:text-3xl text-[#171B54] mt-2 tracking-tight">
-            The Digital Prototyping Canvas
+          <h2 className="font-display font-black text-3xl sm:text-4xl mt-2 tracking-tight">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#171B54] via-[#E31E2B] to-[#F5A623]">
+              The Digital Prototyping Canvas
+            </span>
           </h2>
           <p className="font-sans text-xs sm:text-sm text-gray-500 mt-1 max-w-lg mx-auto">
             Design your custom labeling or packaging layout live. Toggle finishes, sizes, and instant estimated parameters below.

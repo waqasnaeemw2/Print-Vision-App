@@ -106,9 +106,11 @@ export default function ContactForm({ prefilledEstimate, prefilledDesign }: Cont
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="font-display font-bold text-3xl sm:text-4xl text-[#171B54] mt-3 tracking-tight"
+            className="font-display font-black text-4xl sm:text-5xl mt-3 tracking-tight pb-2"
           >
-            Schedule Production
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#171B54] via-[#E31E2B] to-[#F5A623]">
+              Schedule Production
+            </span>
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 15 }}

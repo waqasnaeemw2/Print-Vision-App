@@ -42,8 +42,10 @@ export default function Catalog({ catalogItems }: CatalogProps) {
           <span className="inline-flex items-center gap-2 bg-[#171B54]/5 text-[#171B54] rounded-full px-3 py-1 font-mono text-[10px] font-bold tracking-widest uppercase">
             Product Line Catalog
           </span>
-          <h2 className="font-display font-bold text-3xl sm:text-4xl text-[#171B54] mt-3 tracking-tight">
-            Explore Brand Accessories
+          <h2 className="font-display font-black text-4xl sm:text-5xl mt-3 tracking-tight">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#171B54] via-[#E31E2B] to-[#F5A623]">
+              Explore Brand Accessories
+            </span>
           </h2>
           <p className="font-sans text-sm text-gray-500 mt-2 max-w-lg mx-auto">
             From inside collars to exterior box shipments—inspect our certified technical specifications designed to withstand commercial washes and transit wear.

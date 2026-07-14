@@ -67,9 +67,11 @@ export default function Process() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="font-display font-black text-4xl sm:text-5xl text-[#171B54] mt-4 tracking-tight leading-none"
+            className="font-display font-black text-4xl sm:text-5xl md:text-6xl mt-4 tracking-tight leading-none pb-2"
           >
-            How We Execute Your Run
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#171B54] via-[#E31E2B] to-[#F5A623]">
+              How We Execute Your Run
+            </span>
           </motion.h2>
           
           <motion.p 
