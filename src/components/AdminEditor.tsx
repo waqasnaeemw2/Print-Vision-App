@@ -208,7 +208,10 @@ export default function AdminEditor({ isOpen, onClose, siteConfig, onUpdate, onR
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ password: password.trim() })
+      body: JSON.stringify({ 
+        username: username.trim(),
+        password: password.trim() 
+      })
     })
       .then(async (res) => {
         const data = await res.json();
@@ -220,7 +223,7 @@ export default function AdminEditor({ isOpen, onClose, siteConfig, onUpdate, onR
           setPassword('');
           showToast('Login successful! Welcome to the Print Vision Admin Portal.');
         } else {
-          setAuthError(data.error || 'Invalid passcode or credentials. Please try again.');
+          setAuthError(data.error || 'Invalid username or administrative password. Please try again.');
         }
       })
       .catch((err) => {
