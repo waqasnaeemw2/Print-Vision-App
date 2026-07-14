@@ -3,6 +3,7 @@ import { Sliders, HelpCircle, Calendar, ShieldCheck, DollarSign, Calculator } fr
 import { motion, AnimatePresence } from 'motion/react';
 import { ProductType, EstimateResult } from '../types';
 import { DEFAULT_PRICING_RULES } from '../data';
+import Magnetic from './Magnetic';
 
 interface EstimatorProps {
   onEstimateSelect: (estimate: { type: ProductType; quantity: number; costBreakdown: EstimateResult }) => void;
@@ -89,19 +90,42 @@ export default function Estimator({ onEstimateSelect, pricingRules }: EstimatorP
         
         {/* Section Header */}
         <div className="max-w-3xl mx-auto text-center mb-12">
-          <span className="inline-flex items-center gap-2 bg-[#E31E2B]/10 text-[#E31E2B] rounded-full px-3 py-1 font-mono text-[10px] font-bold tracking-widest uppercase">
+          <motion.span 
+            initial={{ opacity: 0, y: -10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-2 bg-[#E31E2B]/10 text-[#E31E2B] rounded-full px-3 py-1 font-mono text-[10px] font-bold tracking-widest uppercase"
+          >
             Instantly Translucid Costs
-          </span>
-          <h2 className="font-display font-bold text-3xl sm:text-4xl text-[#171B54] mt-3 tracking-tight">
+          </motion.span>
+          <motion.h2 
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="font-display font-bold text-3xl sm:text-4xl text-[#171B54] mt-3 tracking-tight"
+          >
             Production Cost Estimator
-          </h2>
-          <p className="font-sans text-sm text-gray-500 mt-2 max-w-lg mx-auto">
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="font-sans text-sm text-gray-500 mt-2 max-w-lg mx-auto"
+          >
             Input parameters and compute a high-fidelity estimated quote instantly. We offer transparent pricing structures.
-          </p>
+          </motion.p>
         </div>
 
         {/* Estimator Interface */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch"
+        >
           
           {/* Controls Form Left (7 Cols) */}
           <div className="lg:col-span-7 bg-white border border-[#E7E8F2] rounded-2xl p-6 sm:p-8 flex flex-col justify-between">
@@ -294,13 +318,15 @@ export default function Estimator({ onEstimateSelect, pricingRules }: EstimatorP
 
               {/* Action Proceed to Form */}
               <div className="mt-8 pt-6 border-t border-white/10 relative z-10 space-y-4">
-                <a
-                  href="#contact"
-                  onClick={handleApplyEstimate}
-                  className="block text-center w-full bg-gradient-to-r from-[#F5A623] to-amber-500 hover:opacity-95 text-[#171B54] font-sans font-bold text-sm py-4 rounded-xl shadow-lg transition-transform hover:-translate-y-0.5 cursor-pointer"
-                >
-                  Confirm Quote &amp; Request Samples
-                </a>
+                <Magnetic>
+                  <a
+                    href="#contact"
+                    onClick={handleApplyEstimate}
+                    className="block text-center w-full bg-gradient-to-r from-[#F5A623] to-amber-500 hover:opacity-95 text-[#171B54] font-sans font-bold text-sm py-4 rounded-xl shadow-lg transition-transform hover:-translate-y-0.5 cursor-pointer"
+                  >
+                    Confirm Quote &amp; Request Samples
+                  </a>
+                </Magnetic>
 
                 <span className="font-mono text-[8px] text-center block text-gray-400 mt-2 uppercase tracking-widest">
                   Setup fee refunded on orders over 10,000 units
@@ -310,7 +336,7 @@ export default function Estimator({ onEstimateSelect, pricingRules }: EstimatorP
             </div>
           </div>
 
-        </div>
+        </motion.div>
 
       </div>
     </section>

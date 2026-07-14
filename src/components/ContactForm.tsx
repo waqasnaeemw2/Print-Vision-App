@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Mail, Phone, MapPin, Send, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ProductType, EstimateResult, CustomDesign } from '../types';
+import Magnetic from './Magnetic';
 
 interface ContactFormProps {
   prefilledEstimate?: { type: ProductType; quantity: number; costBreakdown: EstimateResult } | null;
@@ -18,6 +19,21 @@ export default function ContactForm({ prefilledEstimate, prefilledDesign }: Cont
   const [success, setSuccess] = useState(false);
   const [website, setWebsite] = useState('');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [isOnline, setIsOnline] = useState(true);
+
+  useEffect(() => {
+    const checkStatus = () => {
+      const date = new Date();
+      // PKT is UTC+5
+      const utc = date.getTime() + (date.getTimezoneOffset() * 60000);
+      const pktDate = new Date(utc + (3600000 * 5));
+      const hour = pktDate.getHours();
+      setIsOnline(hour >= 9 && hour < 19);
+    };
+    checkStatus();
+    const interval = setInterval(checkStatus, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Prefill details whenever estimate transfers
   useEffect(() => {
@@ -75,64 +91,126 @@ export default function ContactForm({ prefilledEstimate, prefilledDesign }: Cont
     <section id="contact" className="py-16 bg-white border-t border-[#E7E8F2]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Section Header */}
+        {/* Section Header with Scroll Reveal */}
         <div className="max-w-3xl mx-auto text-center mb-12">
-          <span className="inline-flex items-center gap-2 bg-[#171B54]/5 text-[#171B54] rounded-full px-3 py-1 font-mono text-[10px] font-bold tracking-widest uppercase">
+          <motion.span 
+            initial={{ opacity: 0, y: -10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-2 bg-[#171B54]/5 text-[#171B54] rounded-full px-3 py-1 font-mono text-[10px] font-bold tracking-widest uppercase"
+          >
             Start Your Run
-          </span>
-          <h2 className="font-display font-bold text-3xl sm:text-4xl text-[#171B54] mt-3 tracking-tight">
+          </motion.span>
+          <motion.h2 
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="font-display font-bold text-3xl sm:text-4xl text-[#171B54] mt-3 tracking-tight"
+          >
             Schedule Production
-          </h2>
-          <p className="font-sans text-sm text-gray-500 mt-2 max-w-lg mx-auto">
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="font-sans text-sm text-gray-500 mt-2 max-w-lg mx-auto"
+          >
             Ready to transfer your prototype parameters? Populate your coordinates below and submit. Our logistics desk will review your plate casts within 24 hours.
-          </p>
+          </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start"
+        >
           
-          {/* Contact Information Cards (5 Cols) */}
-          <div className="lg:col-span-5 flex flex-col gap-6">
-            <div className="flex items-start gap-4 p-5 rounded-2xl border border-[#E7E8F2] bg-[#F5F6FB]/40">
-              <div className="w-10 h-10 rounded-xl bg-[#171B54] flex items-center justify-center text-white shrink-0 shadow-sm">
-                <Phone size={18} />
+          {/* Contact Information Cards (5 Cols) with industrial background & glassmorphic style */}
+          <div className="lg:col-span-5 flex flex-col gap-6 p-6 sm:p-8 rounded-3xl relative overflow-hidden shadow-2xl min-h-[480px] justify-between border border-white/10">
+            {/* Background image overlay */}
+            <div className="absolute inset-0 z-0">
+              {/* PLACEHOLDER IMAGE — replace with real Print Vision photography */}
+              <img 
+                src="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?fm=jpg&q=80&w=600&auto=format&fit=crop" 
+                alt="Industrial Printing Equipment" 
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-[#171b54]/95 via-[#171b54]/85 to-[#0b0c26]/95"></div>
+            </div>
+
+            {/* Title / Info in column */}
+            <div className="relative z-10 text-white pb-4 border-b border-white/10">
+              <h3 className="font-display font-black text-xl tracking-tight">Direct Procurement</h3>
+              <p className="font-sans text-xs text-gray-300 mt-1">Liaise directly with our Faisalabad factory plant layout controllers.</p>
+            </div>
+
+            <div className="relative z-10 flex flex-col gap-5">
+              {/* WhatsApp Card */}
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 shadow-lg hover:border-white/25 hover:bg-white/10 transition-all duration-300">
+                <div className="w-10 h-10 rounded-xl bg-[#E31E2B]/90 flex items-center justify-center text-white shrink-0 shadow-md">
+                  <Phone size={18} />
+                </div>
+                <div className="flex flex-col text-left">
+                  <span className="font-sans font-bold text-sm text-white">Direct WhatsApp Hotline</span>
+                  <span className="font-mono text-sm text-gray-200 mt-1 font-semibold">
+                    <a href="https://wa.me/923027000073" target="_blank" rel="noopener noreferrer" className="hover:text-[#F5A623] transition-colors">
+                      0302-7000073
+                    </a>
+                  </span>
+                  
+                  {isOnline ? (
+                    <span className="inline-flex items-center gap-1.5 font-sans text-[10px] font-bold text-emerald-400 mt-1.5 bg-emerald-500/10 px-2.5 py-0.5 rounded-full w-fit border border-emerald-500/20">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                      Online Now
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 font-sans text-[10px] font-bold text-gray-400 mt-1.5 bg-white/5 px-2.5 py-0.5 rounded-full w-fit border border-white/5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
+                      Opens at 9AM PKT
+                    </span>
+                  )}
+                </div>
               </div>
-              <div className="flex flex-col text-left">
-                <span className="font-sans font-bold text-sm text-[#171B54]">Direct WhatsApp Hotline</span>
-                <span className="font-mono text-sm text-gray-600 mt-1">
-                  <a href="https://wa.me/923027000073" target="_blank" rel="noopener noreferrer" className="hover:text-[#E31E2B] transition-colors">
-                    0302-7000073
-                  </a>
-                </span>
-                <span className="font-sans text-[10px] text-gray-400 mt-1">Instant chat responses, 9AM to 7PM PKT</span>
+
+              {/* Email Card */}
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 shadow-lg hover:border-white/25 hover:bg-white/10 transition-all duration-300">
+                <div className="w-10 h-10 rounded-xl bg-[#171B54] border border-white/10 flex items-center justify-center text-white shrink-0 shadow-md">
+                  <Mail size={18} />
+                </div>
+                <div className="flex flex-col text-left">
+                  <span className="font-sans font-bold text-sm text-white">Email Address</span>
+                  <span className="font-mono text-sm text-gray-200 mt-1 font-semibold">
+                    <a href="mailto:info@printvisionpk.com" className="hover:text-[#F5A623] transition-colors">
+                      info@printvisionpk.com
+                    </a>
+                  </span>
+                  <span className="font-sans text-[10px] text-gray-300 mt-1">Send your design layout or PDF specifications</span>
+                </div>
+              </div>
+
+              {/* Factory Address Card */}
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 shadow-lg hover:border-white/25 hover:bg-white/10 transition-all duration-300">
+                <div className="w-10 h-10 rounded-xl bg-[#F5A623] flex items-center justify-center text-[#171B54] shrink-0 shadow-md">
+                  <MapPin size={18} />
+                </div>
+                <div className="flex flex-col text-left">
+                  <span className="font-sans font-bold text-sm text-white">Factory Address</span>
+                  <span className="font-sans text-sm text-gray-200 mt-1">
+                    Eid Gah Road, Faisalabad, Pakistan
+                  </span>
+                  <span className="font-sans text-[10px] text-gray-300 mt-1">Our commercial printing press plant facility</span>
+                </div>
               </div>
             </div>
 
-            <div className="flex items-start gap-4 p-5 rounded-2xl border border-[#E7E8F2] bg-[#F5F6FB]/40">
-              <div className="w-10 h-10 rounded-xl bg-[#E31E2B] flex items-center justify-center text-white shrink-0 shadow-sm">
-                <Mail size={18} />
-              </div>
-              <div className="flex flex-col text-left">
-                <span className="font-sans font-bold text-sm text-[#171B54]">Email Address</span>
-                <span className="font-mono text-sm text-gray-600 mt-1">
-                  <a href="mailto:info@printvisionpk.com" className="hover:text-[#171B54] transition-colors">
-                    info@printvisionpk.com
-                  </a>
-                </span>
-                <span className="font-sans text-[10px] text-gray-400 mt-1">Send your design layout or PDF specifications</span>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4 p-5 rounded-2xl border border-[#E7E8F2] bg-[#F5F6FB]/40">
-              <div className="w-10 h-10 rounded-xl bg-[#F5A623] flex items-center justify-center text-white shrink-0 shadow-sm">
-                <MapPin size={18} />
-              </div>
-              <div className="flex flex-col text-left">
-                <span className="font-sans font-bold text-sm text-[#171B54]">Factory Address</span>
-                <span className="font-sans text-sm text-gray-600 mt-1">
-                  Eid Gah Road, Faisalabad, Pakistan
-                </span>
-                <span className="font-sans text-[10px] text-gray-400 mt-1">Our commercial printing press plant facility</span>
-              </div>
+            {/* Bottom footnote */}
+            <div className="relative z-10 text-center font-mono text-[9px] text-gray-400 uppercase tracking-widest pt-4 border-t border-white/10">
+              Trusted Pakistan Packaging Suppliers
             </div>
           </div>
 
@@ -251,14 +329,16 @@ export default function ContactForm({ prefilledEstimate, prefilledDesign }: Cont
                     </div>
                   )}
 
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className="w-full bg-gradient-to-r from-[#E31E2B] to-amber-500 hover:opacity-95 disabled:opacity-50 text-white font-sans font-bold text-sm py-4 rounded-xl shadow-lg transition-transform hover:-translate-y-0.5 cursor-pointer flex items-center justify-center gap-2"
-                  >
-                    <Send size={15} />
-                    {submitting ? 'Transmitting to Faisalabad...' : 'Transmit Production Specs →'}
-                  </button>
+                  <Magnetic>
+                    <button
+                      type="submit"
+                      disabled={submitting}
+                      className="w-full bg-gradient-to-r from-[#E31E2B] to-amber-500 hover:opacity-95 disabled:opacity-50 text-white font-sans font-bold text-sm py-4 rounded-xl shadow-lg transition-transform hover:-translate-y-0.5 cursor-pointer flex items-center justify-center gap-2"
+                    >
+                      <Send size={15} />
+                      {submitting ? 'Transmitting to Faisalabad...' : 'Transmit Production Specs →'}
+                    </button>
+                  </Magnetic>
 
                   <div className="flex items-center justify-center gap-1.5 font-mono text-[9px] text-gray-400 uppercase tracking-widest pt-2">
                     <ShieldCheck size={12} />
@@ -308,7 +388,7 @@ export default function ContactForm({ prefilledEstimate, prefilledDesign }: Cont
 
           </div>
 
-        </div>
+        </motion.div>
 
       </div>
     </section>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, Phone, ShoppingBag, Eye, Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Logo from './Logo';
+import Magnetic from './Magnetic';
 
 interface HeaderProps {
   onScrollToSection: (sectionId: string) => void;
@@ -69,12 +70,14 @@ export default function Header({ onScrollToSection, phone = "0302-7000073" }: He
               <Phone size={14} className="text-[#E31E2B]" />
               {phone}
             </a>
-            <button 
-              onClick={() => handleLinkClick('contact')}
-              className="flex items-center gap-2 font-sans font-bold text-xs bg-gradient-to-r from-[#171B54] to-[#1E293B] text-white hover:opacity-95 rounded-full px-5 py-2.5 shadow-sm transition-transform hover:-translate-y-0.5 cursor-pointer"
-            >
-              Request Sample Kit
-            </button>
+            <Magnetic>
+              <button 
+                onClick={() => handleLinkClick('contact')}
+                className="flex items-center gap-2 font-sans font-bold text-xs bg-gradient-to-r from-[#171B54] to-[#1E293B] text-white hover:opacity-95 rounded-full px-5 py-2.5 shadow-sm transition-transform hover:-translate-y-0.5 cursor-pointer"
+              >
+                Request Sample Kit
+              </button>
+            </Magnetic>
           </div>
 
           {/* Mobile hamburger menu */}

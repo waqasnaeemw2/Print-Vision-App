@@ -1,7 +1,9 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
+import TrustStrip from './components/TrustStrip';
 import Studio from './components/Studio';
+import Process from './components/Process';
 import Catalog from './components/Catalog';
 import Estimator from './components/Estimator';
 import WhyUs from './components/WhyUs';
@@ -226,8 +228,14 @@ export default function App() {
           images={siteConfig.hero.images}
         />
 
+        {/* Dynamic Trust / Stats strip */}
+        <TrustStrip />
+
         {/* Dynamic Studio layout */}
         <Studio onDesignSubmit={handleDesignFromStudio} />
+
+        {/* Interactive Process / How-it-Works Section */}
+        <Process />
 
         {/* Digital product catalog specs with dynamic editable catalog items */}
         <Catalog catalogItems={siteConfig.catalogItems} />

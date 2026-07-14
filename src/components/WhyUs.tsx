@@ -11,10 +11,51 @@ interface WhyUsProps {
   };
 }
 
+function CountUp({ value, duration = 1.5, suffix = "", decimals = 0 }: { value: number; duration?: number; suffix?: string; decimals?: number }) {
+  const [current, setCurrent] = useState(0);
+  const [hasAnimated, setHasAnimated] = useState(false);
+
+  return (
+    <motion.span
+      onViewportEnter={() => {
+        if (hasAnimated) return;
+        setHasAnimated(true);
+        let start = 0;
+        const end = value;
+        const startTime = performance.now();
+
+        const animate = (now: number) => {
+          const elapsed = (now - startTime) / 1000;
+          const progress = Math.min(elapsed / duration, 1);
+          const ease = progress * (2 - progress); // easeOutQuad
+          const currentVal = start + (end - start) * ease;
+          setCurrent(currentVal);
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          } else {
+            setCurrent(end);
+          }
+        };
+        requestAnimationFrame(animate);
+      }}
+    >
+      {current.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}
+      {suffix}
+    </motion.span>
+  );
+}
+
 export default function WhyUs({ whyUsConfig }: WhyUsProps) {
   const [pressSpeed, setPressSpeed] = useState(8500); // impressions per hour
   const [inkDensity, setInkDensity] = useState(98.4); // spectrophotometer density percentage
   const [selectedPlate, setSelectedPlate] = useState<'cyan' | 'magenta' | 'yellow' | 'black'>('cyan');
+  const [calibratedPlates, setCalibratedPlates] = useState<Record<string, boolean>>({
+    cyan: false,
+    magenta: false,
+    yellow: false,
+    black: false
+  });
+  const [calibrationToast, setCalibrationToast] = useState<string | null>(null);
 
   const defaultAdvantages = [
     {
@@ -96,6 +137,206 @@ export default function WhyUs({ whyUsConfig }: WhyUsProps) {
             {finalDescription}
           </motion.p>
         </div>
+
+        {/* Interactive CMYK Calibration Control Panel */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="max-w-5xl mx-auto mb-16 bg-[#171B54] text-white rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden border border-white/10"
+        >
+          {/* Subtle Grid overlay background */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+            
+            {/* Left Column: Interactive Swatches and Status */}
+            <div className="lg:col-span-5 flex flex-col justify-between h-full text-left">
+              <div>
+                <span className="font-mono text-xs text-[#F5A623] tracking-widest uppercase font-bold flex items-center gap-1.5 mb-2">
+                  <span className="w-2 h-2 rounded-full bg-[#F5A623] animate-ping"></span>
+                  Active Press Control Panel
+                </span>
+                <h3 className="font-display font-black text-2xl sm:text-3xl tracking-tight leading-none mb-4 text-white">
+                  Industrial CMYK Plate Calibration
+                </h3>
+                <p className="font-sans text-xs sm:text-sm text-gray-300 leading-relaxed mb-6">
+                  Before high-speed printing runs in our Faisalabad facility, print plates must register within a 10-micron tolerance. Click each color swatch to toggle registration alignment.
+                </p>
+              </div>
+
+              {/* Swatch Clickable Elements */}
+              <div className="flex flex-col gap-3">
+                <span className="font-mono text-[10px] text-gray-400 uppercase tracking-widest">Select & Calibrate Plates:</span>
+                <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2">
+                  {Object.keys(plateOffsets).map((colorKey) => {
+                    const key = colorKey as 'cyan' | 'magenta' | 'yellow' | 'black';
+                    const isCalibrated = calibratedPlates[key];
+                    const colorHex = plateOffsets[key].color;
+                    return (
+                      <button
+                        key={key}
+                        onClick={() => {
+                          setSelectedPlate(key);
+                          setCalibratedPlates(prev => ({
+                            ...prev,
+                            [key]: !prev[key]
+                          }));
+                          if (!isCalibrated) {
+                            setCalibrationToast(`${key.toUpperCase()} plate successfully registered!`);
+                          } else {
+                            setCalibrationToast(`${key.toUpperCase()} plate offset released.`);
+                          }
+                        }}
+                        className={`group flex items-center gap-2.5 px-4 py-2.5 rounded-xl border transition-all text-xs font-mono font-bold uppercase tracking-wider text-left cursor-pointer ${
+                          selectedPlate === key
+                            ? 'bg-white/15 border-white text-white'
+                            : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:border-white/35'
+                        }`}
+                      >
+                        <span 
+                          className="w-3.5 h-3.5 rounded-full border border-white/20 transition-transform group-hover:scale-110 shrink-0" 
+                          style={{ backgroundColor: colorHex }}
+                        ></span>
+                        <div className="flex flex-col">
+                          <span>{key}</span>
+                          <span className="text-[8px] font-medium text-gray-400">
+                            {isCalibrated ? 'Registered 0.0' : 'Misaligned'}
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Reset / All Calibrate Buttons */}
+              <div className="mt-6 pt-4 border-t border-white/10 flex flex-wrap items-center gap-3">
+                <button
+                  onClick={() => {
+                    setCalibratedPlates({ cyan: true, magenta: true, yellow: true, black: true });
+                    setCalibrationToast('All plates calibrated to 100% registration accuracy!');
+                  }}
+                  className="bg-gradient-to-r from-[#F5A623] to-amber-500 hover:from-amber-500 hover:to-amber-600 text-[#171B54] font-sans font-bold text-xs px-5 py-2.5 rounded-xl transition-all cursor-pointer shadow-lg flex items-center gap-1.5"
+                >
+                  Auto-Align All Plates
+                </button>
+                <button
+                  onClick={() => {
+                    setCalibratedPlates({ cyan: false, magenta: false, yellow: false, black: false });
+                    setCalibrationToast('All plate offsets released to default misalignment.');
+                  }}
+                  className="bg-white/10 hover:bg-white/20 border border-white/10 text-white font-sans font-bold text-xs px-5 py-2.5 rounded-xl transition-all cursor-pointer"
+                >
+                  Reset Offsets
+                </button>
+              </div>
+
+              {calibrationToast && (
+                <div className="mt-4 text-[11px] font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-lg">
+                  ✓ {calibrationToast}
+                </div>
+              )}
+            </div>
+
+            {/* Middle Column: Stacked Plate Registration Visual Canvas */}
+            <div className="lg:col-span-4 flex items-center justify-center p-4">
+              <div className="relative w-64 h-64 rounded-3xl bg-white border-2 border-white/20 flex items-center justify-center overflow-hidden shadow-inner select-none">
+                {/* Tech Reticle Target Grid lines */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  {/* Concentric circles */}
+                  <div className="absolute w-44 h-44 rounded-full border border-gray-100/80 border-dashed"></div>
+                  <div className="absolute w-28 h-28 rounded-full border border-gray-200 border-dashed"></div>
+                  <div className="absolute w-12 h-12 rounded-full border border-gray-300"></div>
+                  {/* Center reticle */}
+                  <div className="absolute w-full h-[1px] bg-gray-200"></div>
+                  <div className="absolute h-full w-[1px] bg-gray-200"></div>
+                </div>
+
+                {/* Overlapping CMYK registration marks */}
+                {Object.keys(plateOffsets).map((colorKey) => {
+                  const key = colorKey as 'cyan' | 'magenta' | 'yellow' | 'black';
+                  const isCalibrated = calibratedPlates[key];
+                  const offset = plateOffsets[key];
+                  
+                  // Scale up the displacement so it is visible
+                  const currentX = isCalibrated ? 0 : offset.x * 20;
+                  const currentY = isCalibrated ? 0 : offset.y * 20;
+
+                  return (
+                    <motion.div
+                      key={key}
+                      animate={{
+                        x: currentX,
+                        y: currentY,
+                        scale: selectedPlate === key ? 1.08 : 1
+                      }}
+                      transition={{ type: 'spring', stiffness: 90, damping: 12 }}
+                      className="absolute w-14 h-14 rounded-full border-[1.5px] border-white/30 flex items-center justify-center"
+                      style={{
+                        backgroundColor: offset.color,
+                        mixBlendMode: 'multiply',
+                        opacity: 0.7,
+                        zIndex: selectedPlate === key ? 20 : 10
+                      }}
+                    >
+                      {/* Center registration dot */}
+                      <div className="w-1.5 h-1.5 rounded-full bg-white/70"></div>
+                    </motion.div>
+                  );
+                })}
+
+                {/* Digital readout header inside grid */}
+                <div className="absolute bottom-3 left-4 font-mono text-[9px] text-gray-400">
+                  REF: CAL-FSD-2026
+                </div>
+                <div className="absolute top-3 right-4 font-mono text-[9px] text-gray-400 uppercase">
+                  {Object.values(calibratedPlates).every(Boolean) ? (
+                    <span className="text-emerald-600 font-bold flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                      OPTIMAL REGISTRATION
+                    </span>
+                  ) : (
+                    <span className="text-amber-600 font-bold flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                      CALIBRATION REQ
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Dynamic Count-Up Indicators */}
+            <div className="lg:col-span-3 flex flex-col gap-6 justify-center text-left">
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-colors">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-9 h-9 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                    <Gauge size={18} className="text-amber-500" />
+                  </div>
+                  <span className="font-mono text-[10px] text-gray-400 uppercase tracking-widest">Press Velocity</span>
+                </div>
+                <div className="font-display font-black text-3xl sm:text-4xl text-white tracking-tight">
+                  <CountUp value={pressSpeed} suffix="" />
+                </div>
+                <span className="font-sans text-[11px] text-gray-300 mt-1 block">Impressions per hour (Rotary/Offset)</span>
+              </div>
+
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-colors">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-9 h-9 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                    <Sliders size={18} className="text-blue-500" />
+                  </div>
+                  <span className="font-mono text-[10px] text-gray-400 uppercase tracking-widest">Color Density</span>
+                </div>
+                <div className="font-display font-black text-3xl sm:text-4xl text-white tracking-tight">
+                  <CountUp value={inkDensity} suffix="%" decimals={1} />
+                </div>
+                <span className="font-sans text-[11px] text-gray-300 mt-1 block">Spectrophotometer density lock</span>
+              </div>
+            </div>
+
+          </div>
+        </motion.div>
 
         {/* Advantage Bento Grid */}
         <div className="max-w-5xl mx-auto">

@@ -1,7 +1,8 @@
 import React from 'react';
 import { ArrowRight, Sparkles, CheckCircle, Printer } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, useScroll, useTransform } from 'motion/react';
 import SmartImage from './SmartImage';
+import Magnetic from './Magnetic';
 
 interface HeroProps {
   onScrollToSection: (sectionId: string) => void;
@@ -202,6 +203,12 @@ export default function Hero({
     "https://images.unsplash.com/photo-1616400619175-5ebd300900cf?fm=jpg&q=80&w=400&auto=format&fit=crop"
   ]
 }: HeroProps) {
+  const { scrollY } = useScroll();
+  const yCard1 = useTransform(scrollY, [0, 800], [0, -45]);
+  const yCard2 = useTransform(scrollY, [0, 800], [0, 45]);
+  const yCard3 = useTransform(scrollY, [0, 800], [0, -25]);
+  const yCard4 = useTransform(scrollY, [0, 800], [0, 25]);
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-[#F5F6FB] via-white to-white pt-10 pb-24 lg:pt-16 lg:pb-32">
       {/* Absolute luxury background swirly grid overlay */}
@@ -282,24 +289,28 @@ export default function Hero({
               variants={actionVariants}
               className="mt-8 flex flex-row items-center gap-2.5 sm:gap-4 w-full sm:w-auto"
             >
-              <motion.button 
-                whileHover={{ scale: 1.03, y: -1 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => onScrollToSection('studio')}
-                className="group flex items-center justify-center gap-1.5 sm:gap-2.5 bg-[#171B54] hover:bg-[#E31E2B] text-white font-sans font-extrabold text-xs sm:text-sm md:text-base px-3.5 sm:px-6 md:px-8 py-3 sm:py-3.5 md:py-4 rounded-full shadow-lg hover:shadow-xl transition-all cursor-pointer whitespace-nowrap flex-1 sm:flex-initial"
-              >
-                Launch Customizer Studio
-                <ArrowRight size={14} className="transition-transform group-hover:translate-x-1 shrink-0 hidden min-[380px]:inline" />
-              </motion.button>
+              <Magnetic>
+                <motion.button 
+                  whileHover={{ scale: 1.03, y: -1 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => onScrollToSection('studio')}
+                  className="group flex items-center justify-center gap-1.5 sm:gap-2.5 bg-[#171B54] hover:bg-[#E31E2B] text-white font-sans font-extrabold text-xs sm:text-sm md:text-base px-3.5 sm:px-6 md:px-8 py-3 sm:py-3.5 md:py-4 rounded-full shadow-lg hover:shadow-xl transition-all cursor-pointer whitespace-nowrap flex-1 sm:flex-initial"
+                >
+                  Launch Customizer Studio
+                  <ArrowRight size={14} className="transition-transform group-hover:translate-x-1 shrink-0 hidden min-[380px]:inline" />
+                </motion.button>
+              </Magnetic>
               
-              <motion.button 
-                whileHover={{ scale: 1.03, backgroundColor: "rgba(23, 27, 84, 0.05)" }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => onScrollToSection('estimator')}
-                className="font-sans font-extrabold text-xs sm:text-sm md:text-base text-[#171B54] border border-[#171B54]/25 hover:border-[#171B54] rounded-full px-3.5 sm:px-6 md:px-8 py-3 sm:py-3.5 md:py-4 transition-all cursor-pointer whitespace-nowrap flex-1 sm:flex-initial text-center bg-white/50 backdrop-blur-sm"
-              >
-                Interactive Cost Estimator
-              </motion.button>
+              <Magnetic>
+                <motion.button 
+                  whileHover={{ scale: 1.03, backgroundColor: "rgba(23, 27, 84, 0.05)" }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => onScrollToSection('estimator')}
+                  className="font-sans font-extrabold text-xs sm:text-sm md:text-base text-[#171B54] border border-[#171B54]/25 hover:border-[#171B54] rounded-full px-3.5 sm:px-6 md:px-8 py-3 sm:py-3.5 md:py-4 transition-all cursor-pointer whitespace-nowrap flex-1 sm:flex-initial text-center bg-white/50 backdrop-blur-sm"
+                >
+                  Interactive Cost Estimator
+                </motion.button>
+              </Magnetic>
             </motion.div>
 
             {/* Quick Micro-Capabilities */}
@@ -374,6 +385,7 @@ export default function Hero({
                 variants={card1Variants}
                 initial="hidden"
                 animate="visible"
+                style={{ y: yCard1 }}
                 whileHover={{ rotate: -2, scale: 1.05, zIndex: 40 }}
                 className="absolute w-[155px] sm:w-[190px] h-[210px] sm:h-[250px] top-4 sm:top-6 left-2 sm:left-4 rounded-2xl overflow-hidden border-[4px] border-white shadow-lg z-10 hover:shadow-2xl transition-all duration-300 group flex items-stretch cursor-pointer bg-white"
               >
@@ -398,6 +410,7 @@ export default function Hero({
                 variants={card2Variants}
                 initial="hidden"
                 animate="visible"
+                style={{ y: yCard2 }}
                 whileHover={{ rotate: 1, scale: 1.05, zIndex: 40 }}
                 className="absolute w-[155px] sm:w-[190px] h-[210px] sm:h-[250px] top-16 sm:top-20 right-2 sm:right-4 rounded-2xl overflow-hidden border-[4px] border-white shadow-lg z-20 hover:shadow-2xl transition-all duration-300 group flex items-stretch cursor-pointer bg-white"
               >
@@ -422,6 +435,7 @@ export default function Hero({
                 variants={card3Variants}
                 initial="hidden"
                 animate="visible"
+                style={{ y: yCard3 }}
                 whileHover={{ rotate: 0, scale: 1.05, zIndex: 40 }}
                 className="absolute w-[155px] sm:w-[190px] h-[210px] sm:h-[250px] bottom-16 sm:bottom-12 left-2 sm:left-4 rounded-2xl overflow-hidden border-[4px] border-white shadow-xl z-25 hover:shadow-2xl transition-all duration-300 group flex items-stretch cursor-pointer bg-white"
               >
@@ -446,6 +460,7 @@ export default function Hero({
                 variants={card4Variants}
                 initial="hidden"
                 animate="visible"
+                style={{ y: yCard4 }}
                 whileHover={{ rotate: 2, scale: 1.05, zIndex: 40 }}
                 className="absolute w-[155px] sm:w-[190px] h-[210px] sm:h-[250px] bottom-4 sm:bottom-4 right-2 sm:right-4 rounded-2xl overflow-hidden border-[4px] border-white shadow-lg z-30 hover:shadow-2xl transition-all duration-300 group flex items-stretch cursor-pointer bg-white"
               >
